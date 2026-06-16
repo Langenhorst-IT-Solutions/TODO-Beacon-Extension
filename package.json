@@ -2,7 +2,7 @@
   "name": "todo-beacon",
   "displayName": "TODO Beacon",
   "description": "Bridges code TODO comments and a managed task list — one task, two faces.",
-  "version": "0.0.0",
+  "version": "1.0.0-beta.1",
   "private": true,
   "publisher": "langenhorst-it-solutions",
   "license": "MIT",
@@ -17,9 +17,21 @@
   "engines": {
     "vscode": "^1.90.0"
   },
-  "categories": ["Other"],
-  "keywords": ["todo", "fixme", "task", "taskpaper", "comment", "productivity", "time-tracking"],
-  "activationEvents": ["onStartupFinished"],
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "todo",
+    "fixme",
+    "task",
+    "taskpaper",
+    "comment",
+    "productivity",
+    "time-tracking"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension",
   "contributes": {
     "viewsContainers": {
@@ -70,12 +82,25 @@
       "properties": {
         "todo-beacon.tags": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [
-            "TODO", "FIXME", "BUG", "HACK", "NOTE",
-            "TEST", "DEBUG", "OPTIMIZE", "PERF",
-            "REVIEW", "IDEA", "WARNING", "WARN",
-            "DEPRECATED", "XXX"
+            "TODO",
+            "FIXME",
+            "BUG",
+            "HACK",
+            "NOTE",
+            "TEST",
+            "DEBUG",
+            "OPTIMIZE",
+            "PERF",
+            "REVIEW",
+            "IDEA",
+            "WARNING",
+            "WARN",
+            "DEPRECATED",
+            "XXX"
           ],
           "description": "Comment tags to detect in source files."
         },
@@ -86,7 +111,9 @@
         },
         "todo-beacon.exclude": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [
             "**/node_modules/**",
             "**/.git/**",
