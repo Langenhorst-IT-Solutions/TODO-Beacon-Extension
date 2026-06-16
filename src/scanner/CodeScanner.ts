@@ -1,0 +1,96 @@
+import * as vscode from 'vscode';
+import { TodoComment } from '../types';
+
+export class CodeScanner {
+  private readonly tagPattern: RegExp;
+
+  constructor(
+    private readonly tags: string[],
+    private readonly maxFileSizeBytes: number = 1024 * 1024,
+  ) {
+    const escaped = tags
+      .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('|');
+    // Matches the tag keyword at a word boundary, followed by optional colon/space and text
+    this.tagPattern = new RegExp(`\\b(${escaped})\\b[:\\s]?(.*)`, 'i');
+  }
+
+  async scan(excludePatterns: string[]): Promise<TodoComment[]> {
+    const excludeGlob =
+      excludePatterns.length > 0 ? `{${excludePatterns.join(',')}}` : undefined;
+    const files = await vscode.workspace.findFiles('**/*', excludeGlob);
+
+    const results: TodoComment[] = [];
+    for (const file of files) {
+      const todos = await this.scanFile(file);
+      results.push(...todos);
+    }
+    return results;
+  }
+
+  async scanFile(uri: vscode.Uri): Promise<TodoComment[]> {
+    try {
+      const stat = await vscode.workspace.fs.stat(uri);
+      if (stat.size > this.maxFileSizeBytes) return [];
+    } catch {
+      return [];
+    }
+
+    let bytes: Uint8Array;
+    try {
+      bytes = await vscode.workspace.fs.readFile(uri);
+    } catch {
+      return [];
+    }
+
+    if (isBinary(bytes)) return [];
+
+    const content = new TextDecoder('utf-8').decode(bytes);
+    const relativePath = vscode.workspace.asRelativePath(uri);
+    return this.parseLines(content, relativePath);
+  }
+
+  scanDocument(doc: vscode.TextDocument): TodoComment[] {
+    const relativePath = vscode.workspace.asRelativePath(doc.uri);
+    return this.parseLines(doc.getText(), relativePath);
+  }
+
+  parseLines(content: string, filePath: string): TodoComment[] {
+    const lines = content.split(/\r?\n/);
+    const results: TodoComment[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const match = this.tagPattern.exec(line);
+      if (!match) continue;
+
+      const column = line.indexOf(match[1]);
+      const id = extractId(match[2] ?? '');
+
+      results.push({
+        id,
+        tag: match[1].toUpperCase(),
+        text: (match[2] ?? '').replace(/\(#[a-f0-9]{4,8}\)/, '').trim(),
+        file: filePath,
+        line: i,
+        column,
+        rawLine: line.trimEnd(),
+      });
+    }
+
+    return results;
+  }
+}
+
+function isBinary(bytes: Uint8Array): boolean {
+  const sample = Math.min(512, bytes.length);
+  for (let i = 0; i < sample; i++) {
+    if (bytes[i] === 0) return true;
+  }
+  return false;
+}
+
+function extractId(text: string): string | null {
+  const match = /\(#([a-f0-9]{4,8})\)/.exec(text);
+  return match ? match[1] : null;
+}

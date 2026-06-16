@@ -1,0 +1,140 @@
+{
+  "name": "todo-beacon",
+  "displayName": "TODO Beacon",
+  "description": "Bridges code TODO comments and a managed task list — one task, two faces.",
+  "version": "0.0.0",
+  "private": true,
+  "publisher": "langenhorst-it-solutions",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/B1GSt4R/TODO-Beacon-Extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/B1GSt4R/TODO-Beacon-Extension/issues"
+  },
+  "homepage": "https://github.com/B1GSt4R/TODO-Beacon-Extension#readme",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "keywords": ["todo", "fixme", "task", "taskpaper", "comment", "productivity", "time-tracking"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "todo-beacon",
+          "title": "TODO Beacon",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "todo-beacon": [
+        {
+          "id": "todo-beacon.codeView",
+          "name": "Code TODOs"
+        },
+        {
+          "id": "todo-beacon.listView",
+          "name": "Task List"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "todo-beacon.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)",
+        "category": "TODO Beacon"
+      },
+      {
+        "command": "todo-beacon.openFile",
+        "title": "Open in Editor",
+        "category": "TODO Beacon"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "todo-beacon.refresh",
+          "when": "view == todo-beacon.codeView || view == todo-beacon.listView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "TODO Beacon",
+      "properties": {
+        "todo-beacon.tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "TODO", "FIXME", "BUG", "HACK", "NOTE",
+            "TEST", "DEBUG", "OPTIMIZE", "PERF",
+            "REVIEW", "IDEA", "WARNING", "WARN",
+            "DEPRECATED", "XXX"
+          ],
+          "description": "Comment tags to detect in source files."
+        },
+        "todo-beacon.taskFile": {
+          "type": "string",
+          "default": "tasks.todo",
+          "description": "Path to the TaskPaper task file, relative to the workspace root."
+        },
+        "todo-beacon.exclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/out/**",
+            "**/.vscode-test/**"
+          ],
+          "description": "Glob patterns to exclude from code scanning."
+        },
+        "todo-beacon.maxFileSizeKb": {
+          "type": "number",
+          "default": 1024,
+          "description": "Maximum file size in KB to scan. Larger files are skipped."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p tsconfig.json --outDir out",
+    "watch-tests": "tsc -p tsconfig.json -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/github": "^10.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^8.0.0",
+    "husky": "^9.0.0",
+    "semantic-release": "^24.0.0",
+    "semantic-release-vsce": "^5.0.0",
+    "typescript": "^5.0.0"
+  }
+}

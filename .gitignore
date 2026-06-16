@@ -1,0 +1,32 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+out/
+dist/
+*.vsix
+
+# VS Code extension test runner
+.vscode-test/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# AI assistant local config (not for public repos)
+.claude/
+CLAUDE.md
+.cursorrules
+.cursorignore
+.cursor/
+
+# Sidecar index — regenerated at runtime, not committed
+.vscode/todo-beacon-index.json
