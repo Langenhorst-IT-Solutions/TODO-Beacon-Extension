@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { TodoComment, Project, Task, OpenTarget } from '../types';
+import { tagIcon } from '../tagStyles';
 
 // ─── Code TODO Tree ──────────────────────────────────────────────────────────
 
@@ -173,27 +174,6 @@ function groupByTag(todos: TodoComment[]): Map<string, TodoComment[]> {
     map.set(key, group);
   }
   return map;
-}
-
-function tagIcon(tag: string): vscode.ThemeIcon {
-  const icons: Record<string, string> = {
-    TODO: 'circle-outline',
-    FIXME: 'tools',
-    BUG: 'bug',
-    HACK: 'flame',
-    NOTE: 'note',
-    TEST: 'beaker',
-    DEBUG: 'terminal',
-    OPTIMIZE: 'dashboard',
-    PERF: 'dashboard',
-    REVIEW: 'eye',
-    IDEA: 'lightbulb',
-    WARNING: 'warning',
-    WARN: 'warning',
-    DEPRECATED: 'archive',
-    XXX: 'error',
-  };
-  return new vscode.ThemeIcon(icons[tag] ?? 'circle-outline');
 }
 
 function statusIcon(status: string): vscode.ThemeIcon {
