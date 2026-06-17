@@ -1,12 +1,13 @@
 <div align="center">
 
-<img src="resources/icon.png" alt="TODO Beacon logo" width="96" height="96">
+<img src="resources/todo-beacon-icon.png" alt="TODO Beacon logo" width="96" height="96">
 
 # TODO Beacon
 
 **Bridges code TODO comments and a managed task list — one task, two faces.**
 
 [![CI](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/B1GSt4R/TODO-Beacon-Extension/dev/.github/badges/coverage.json)](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml)
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/langenhorst-it-solutions.todo-beacon?label=marketplace)](https://marketplace.visualstudio.com/items?itemName=langenhorst-it-solutions.todo-beacon)
 [![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/langenhorst-it-solutions.todo-beacon)](https://marketplace.visualstudio.com/items?itemName=langenhorst-it-solutions.todo-beacon)
 [![License: MIT](https://img.shields.io/github/license/B1GSt4R/TODO-Beacon-Extension)](LICENSE)
@@ -79,7 +80,13 @@ VS Code `1.90.0` or newer.
 
 ## Contributing
 
-Issues and pull requests are welcome at [github.com/B1GSt4R/TODO-Beacon-Extension](https://github.com/B1GSt4R/TODO-Beacon-Extension).
+Issues and pull requests are welcome at [github.com/B1GSt4R/TODO-Beacon-Extension](https://github.com/B1GSt4R/TODO-Beacon-Extension). Planned features and design decisions are tracked in [ROADMAP.md](ROADMAP.md).
+
+```sh
+npm install
+npm test              # run the test suite
+npm run coverage      # run tests with a coverage report
+```
 
 ## License
 
