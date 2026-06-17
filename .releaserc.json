@@ -1,5 +1,11 @@
 {
-  "branches": ["main"],
+  "branches": [
+    "main",
+    {
+      "name": "dev",
+      "prerelease": "rc"
+    }
+  ],
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -10,10 +16,9 @@
       }
     ],
     [
-      "semantic-release-vsce",
+      "@semantic-release/exec",
       {
-        "packageVsix": true,
-        "publish": false
+        "prepareCmd": "node scripts/vsix-package.js ${nextRelease.version}"
       }
     ],
     [

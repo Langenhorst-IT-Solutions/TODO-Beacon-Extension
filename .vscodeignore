@@ -1,0 +1,33 @@
+# Development files — excluded from VSIX
+.claude/
+.cursor/
+.github/
+.husky/
+.vscode/
+.vscode-test/
+out/
+scripts/
+src/
+
+# Config & tooling
+.eslintrc.json
+.gitignore
+.releaserc.json
+.vscode-test.mjs
+commitlint.config.cjs
+commitlint.config.js
+esbuild.js
+tsconfig.json
+tsconfig.test.json
+
+# Docs / planning
+CONCEPT.md
+
+# Lockfiles & deps
+node_modules/
+package-lock.json
+yarn.lock
+
+# Misc
+**/.DS_Store
+**/Thumbs.db
