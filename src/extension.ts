@@ -3,6 +3,7 @@ import { CodeScanner } from './scanner/CodeScanner';
 import { TaskPaperParser } from './parser/TaskPaperParser';
 import { MarkdownTaskParser } from './parser/MarkdownTaskParser';
 import { CodeTodoTreeProvider, TaskListTreeProvider } from './tree/TodoTreeProvider';
+import { TagHighlighter } from './decorations/TagHighlighter';
 import { OpenTarget, Project } from './types';
 
 const TASK_FILE_CANDIDATES = ['tasks.todo', 'TODO.md', 'todo.md', 'TASKS.md', 'tasks.md'];
@@ -18,10 +19,26 @@ export function activate(context: vscode.ExtensionContext): void {
   const markdownParser = new MarkdownTaskParser();
   const codeProvider = new CodeTodoTreeProvider();
   const listProvider = new TaskListTreeProvider();
+  const highlighter = new TagHighlighter(scanner);
 
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider('todo-beacon.codeView', codeProvider),
     vscode.window.registerTreeDataProvider('todo-beacon.listView', listProvider),
+    highlighter,
+  );
+
+  function updateVisibleHighlights(): void {
+    for (const editor of vscode.window.visibleTextEditors) {
+      highlighter.updateEditor(editor);
+    }
+  }
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeVisibleTextEditors(updateVisibleHighlights),
+    vscode.workspace.onDidChangeTextDocument(event => {
+      const editor = vscode.window.visibleTextEditors.find(e => e.document === event.document);
+      if (editor) highlighter.updateEditor(editor);
+    }),
   );
 
   const excludePatterns = config.get<string[]>('exclude') ?? [];
@@ -77,6 +94,7 @@ export function activate(context: vscode.ExtensionContext): void {
       refreshTaskList(taskFile),
     ]);
     codeProvider.update(todos);
+    updateVisibleHighlights();
   }
 
   async function refreshTaskList(

@@ -101,6 +101,73 @@
         }
       ]
     },
+    "colors": [
+      {
+        "id": "todoBeacon.todoForeground",
+        "description": "Color used for TODO tags, in the editor and tree views.",
+        "defaults": { "dark": "#3794FF", "light": "#3794FF", "highContrast": "#3794FF" }
+      },
+      {
+        "id": "todoBeacon.fixmeForeground",
+        "description": "Color used for FIXME tags, in the editor and tree views.",
+        "defaults": { "dark": "#E2A33D", "light": "#E2A33D", "highContrast": "#E2A33D" }
+      },
+      {
+        "id": "todoBeacon.bugForeground",
+        "description": "Color used for BUG tags, in the editor and tree views.",
+        "defaults": { "dark": "#F14C4C", "light": "#F14C4C", "highContrast": "#F14C4C" }
+      },
+      {
+        "id": "todoBeacon.hackForeground",
+        "description": "Color used for HACK tags, in the editor and tree views.",
+        "defaults": { "dark": "#FFB454", "light": "#FFB454", "highContrast": "#FFB454" }
+      },
+      {
+        "id": "todoBeacon.noteForeground",
+        "description": "Color used for NOTE tags, in the editor and tree views.",
+        "defaults": { "dark": "#89D185", "light": "#89D185", "highContrast": "#89D185" }
+      },
+      {
+        "id": "todoBeacon.testForeground",
+        "description": "Color used for TEST tags, in the editor and tree views.",
+        "defaults": { "dark": "#B180D7", "light": "#B180D7", "highContrast": "#B180D7" }
+      },
+      {
+        "id": "todoBeacon.debugForeground",
+        "description": "Color used for DEBUG tags, in the editor and tree views.",
+        "defaults": { "dark": "#D16AD1", "light": "#D16AD1", "highContrast": "#D16AD1" }
+      },
+      {
+        "id": "todoBeacon.optimizeForeground",
+        "description": "Color used for OPTIMIZE/PERF tags, in the editor and tree views.",
+        "defaults": { "dark": "#FFB454", "light": "#FFB454", "highContrast": "#FFB454" }
+      },
+      {
+        "id": "todoBeacon.reviewForeground",
+        "description": "Color used for REVIEW tags, in the editor and tree views.",
+        "defaults": { "dark": "#F783AC", "light": "#F783AC", "highContrast": "#F783AC" }
+      },
+      {
+        "id": "todoBeacon.ideaForeground",
+        "description": "Color used for IDEA tags, in the editor and tree views.",
+        "defaults": { "dark": "#4EC9B0", "light": "#4EC9B0", "highContrast": "#4EC9B0" }
+      },
+      {
+        "id": "todoBeacon.warningForeground",
+        "description": "Color used for WARNING/WARN tags, in the editor and tree views.",
+        "defaults": { "dark": "#FF8C00", "light": "#FF8C00", "highContrast": "#FF8C00" }
+      },
+      {
+        "id": "todoBeacon.deprecatedForeground",
+        "description": "Color used for DEPRECATED tags, in the editor and tree views.",
+        "defaults": { "dark": "#888888", "light": "#888888", "highContrast": "#888888" }
+      },
+      {
+        "id": "todoBeacon.xxxForeground",
+        "description": "Color used for XXX tags, in the editor and tree views.",
+        "defaults": { "dark": "#F44747", "light": "#F44747", "highContrast": "#F44747" }
+      }
+    ],
     "configuration": {
       "title": "TODO Beacon",
       "properties": {
