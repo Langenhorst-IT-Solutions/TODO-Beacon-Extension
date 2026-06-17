@@ -3,18 +3,41 @@ import { Task, Project, TaskStatus } from '../types';
 export class MarkdownTaskParser {
   parse(content: string): Project[] {
     const lines = content.split(/\r?\n/);
-    const projects: Project[] = [];
+    const roots: Project[] = [];
+    // Stack of ancestor headings, shallowest first, used to nest a new
+    // heading under the closest heading with a smaller level.
+    const stack: Project[] = [];
     let currentProject: Project | null = null;
 
     for (let i = 0; i < lines.length; i++) {
       const trimmed = lines[i].trim();
       if (!trimmed) continue;
 
-      // Markdown heading → new project / section
-      const headingMatch = /^#{1,6}\s+(.+)$/.exec(trimmed);
+      // Markdown heading → new project / section, nested under the closest
+      // shallower heading still on the stack (e.g. "##" nests under "#").
+      const headingMatch = /^(#{1,6})\s+(.+)$/.exec(trimmed);
       if (headingMatch) {
-        currentProject = { name: headingMatch[1].trim(), tasks: [], lineNumber: i };
-        projects.push(currentProject);
+        const level = headingMatch[1].length;
+        const project: Project = {
+          name: headingMatch[2].trim(),
+          tasks: [],
+          lineNumber: i,
+          level,
+          children: [],
+        };
+
+        while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+          stack.pop();
+        }
+
+        if (stack.length === 0) {
+          roots.push(project);
+        } else {
+          stack[stack.length - 1].children.push(project);
+        }
+        stack.push(project);
+
+        currentProject = project;
         continue;
       }
 
@@ -30,16 +53,16 @@ export class MarkdownTaskParser {
       const id = extractId(rawText);
       const text = rawText.replace(/\(#[a-f0-9]{4,8}\)/g, '').trim();
 
-      const task: Task = { id, text, status, tags: {}, lineNumber: i };
+      const task: Task = { id, text, status, tags: {}, lineNumber: i, file: '' };
 
       if (!currentProject) {
-        currentProject = { name: '', tasks: [], lineNumber: -1 };
-        projects.push(currentProject);
+        currentProject = { name: '', tasks: [], lineNumber: -1, level: 0, children: [] };
+        roots.push(currentProject);
       }
       currentProject.tasks.push(task);
     }
 
-    return projects;
+    return roots;
   }
 }
 

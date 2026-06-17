@@ -69,7 +69,46 @@ suite('MarkdownTaskParser', () => {
   test('handles all heading levels', () => {
     const content = '# H1\n- [ ] A\n## H2\n- [ ] B\n### H3\n- [ ] C';
     const result = parser.parse(content);
-    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0].name, 'H1');
+    assert.strictEqual(result[0].children[0].name, 'H2');
+    assert.strictEqual(result[0].children[0].children[0].name, 'H3');
+  });
+
+  // ─── Heading hierarchy ───────────────────────────────────────────────────
+
+  test('nests a deeper heading under the preceding shallower heading', () => {
+    const content = '# Work\n## Subsection\n- [ ] task';
+    const result = parser.parse(content);
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].name, 'Work');
+    assert.strictEqual(result[0].children.length, 1);
+    assert.strictEqual(result[0].children[0].name, 'Subsection');
+    assert.strictEqual(result[0].children[0].tasks[0].text, 'task');
+  });
+
+  test('keeps same-level headings as siblings, not nested', () => {
+    const content = '## Work\n## Personal';
+    const result = parser.parse(content);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0].children.length, 0);
+  });
+
+  test('returns to the correct ancestor after a deeper section ends', () => {
+    const content = '# A\n## A1\n- [ ] x\n# B\n- [ ] y';
+    const result = parser.parse(content);
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0].name, 'A');
+    assert.strictEqual(result[0].children[0].name, 'A1');
+    assert.strictEqual(result[1].name, 'B');
+    assert.strictEqual(result[1].tasks[0].text, 'y');
+  });
+
+  test('a heading one level shallower closes a deeper sibling section', () => {
+    const content = '# A\n### Deep\n- [ ] x\n## Shallower\n- [ ] y';
+    const result = parser.parse(content);
+    assert.strictEqual(result[0].children.length, 2);
+    assert.strictEqual(result[0].children[0].name, 'Deep');
+    assert.strictEqual(result[0].children[1].name, 'Shallower');
   });
 });
