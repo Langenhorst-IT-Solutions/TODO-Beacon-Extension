@@ -1,9 +1,7 @@
-name: Release
+name: Release RC
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -11,9 +9,10 @@ permissions:
   pull-requests: write
 
 jobs:
-  release:
-    name: Semantic Release
+  release-rc:
+    name: Semantic Release (RC)
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,7 +34,7 @@ jobs:
         env:
           HUSKY: 0
 
-      - name: Release
+      - name: Release RC
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
