@@ -23,6 +23,9 @@ tsconfig.test.json
 # Docs / planning
 CONCEPT.md
 
+# Design sources (not needed at runtime)
+resources/logo-source.svg
+
 # Lockfiles & deps
 node_modules/
 package-lock.json
