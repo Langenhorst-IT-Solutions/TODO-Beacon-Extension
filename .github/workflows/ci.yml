@@ -37,6 +37,12 @@ jobs:
 
       - name: Update coverage badge
         if: github.event_name == 'push'
+        env:
+          # dev/main are protected by a ruleset; the default GITHUB_TOKEN acts
+          # as the github-actions bot, which isn't on the bypass list and
+          # can't push this commit. RELEASE_PAT belongs to a repo admin,
+          # which the ruleset's "Repository admin" bypass actor allows.
+          RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
         run: |
           npm run coverage:badge
           git add .github/badges/coverage.json
@@ -44,5 +50,5 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git commit -m "chore(coverage): update coverage badge [skip ci]"
-            git push
+            git push "https://x-access-token:${RELEASE_PAT}@github.com/${{ github.repository }}.git" "HEAD:${{ github.ref_name }}"
           fi

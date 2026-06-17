@@ -38,5 +38,9 @@ jobs:
       - name: Release
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # dev/main are protected by a ruleset; the default GITHUB_TOKEN acts
+          # as the github-actions bot, which isn't on the bypass list and
+          # can't push the release commit/tag. RELEASE_PAT belongs to a repo
+          # admin, which the ruleset's "Repository admin" bypass actor allows.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
