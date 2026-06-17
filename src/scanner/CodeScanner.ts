@@ -11,8 +11,10 @@ export class CodeScanner {
     const escaped = tags
       .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
       .join('|');
-    // Matches the tag keyword at a word boundary, followed by optional colon/space and text
-    this.tagPattern = new RegExp(`\\b(${escaped})\\b[:\\s]?(.*)`, 'i');
+    // Tag must be followed by a colon (e.g. "TODO:" not "TODO text").
+    // Case-insensitive so Todo:, todo:, TODO: all match.
+    // Optional whitespace before/after the colon is allowed.
+    this.tagPattern = new RegExp(`\\b(${escaped})\\b\\s*:\\s*(.*)`, 'i');
   }
 
   async scan(excludePatterns: string[]): Promise<TodoComment[]> {
