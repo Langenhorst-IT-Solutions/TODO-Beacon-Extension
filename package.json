@@ -1,0 +1,279 @@
+{
+  "name": "todo-beacon",
+  "displayName": "TODO Beacon",
+  "description": "Bridges code TODO comments and a managed task list — one task, two faces.",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "Langenhorst-IT-Solutions",
+  "author": {
+    "name": "Dominic Langenhorst"
+  },
+  "license": "MIT",
+  "icon": "resources/todo-beacon-icon.png",
+  "galleryBanner": {
+    "color": "#1B1F3B",
+    "theme": "dark"
+  },
+  "pricing": "Free",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/issues"
+  },
+  "homepage": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension#readme",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "todo",
+    "fixme",
+    "task",
+    "task list",
+    "taskpaper",
+    "markdown",
+    "comments",
+    "checklist",
+    "productivity"
+  ],
+  "badges": [
+    {
+      "url": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=dev",
+      "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml",
+      "description": "CI status"
+    },
+    {
+      "url": "https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension",
+      "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/blob/main/LICENSE",
+      "description": "License"
+    }
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "todo-beacon",
+          "title": "TODO Beacon",
+          "icon": "resources/todo-beacon-activitybar.svg"
+        }
+      ]
+    },
+    "views": {
+      "todo-beacon": [
+        {
+          "id": "todo-beacon.codeView",
+          "name": "Code TODOs"
+        },
+        {
+          "id": "todo-beacon.listView",
+          "name": "Task List"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "todo-beacon.refresh",
+        "title": "Refresh TODOs",
+        "icon": "$(refresh)",
+        "category": "TODO Beacon"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "todo-beacon.refresh",
+          "when": "view == todo-beacon.codeView || view == todo-beacon.listView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "colors": [
+      {
+        "id": "todoBeacon.todoForeground",
+        "description": "Color used for TODO tags, in the editor and tree views.",
+        "defaults": { "dark": "#3794FF", "light": "#3794FF", "highContrast": "#3794FF" }
+      },
+      {
+        "id": "todoBeacon.fixmeForeground",
+        "description": "Color used for FIXME tags, in the editor and tree views.",
+        "defaults": { "dark": "#E2A33D", "light": "#E2A33D", "highContrast": "#E2A33D" }
+      },
+      {
+        "id": "todoBeacon.bugForeground",
+        "description": "Color used for BUG tags, in the editor and tree views.",
+        "defaults": { "dark": "#F14C4C", "light": "#F14C4C", "highContrast": "#F14C4C" }
+      },
+      {
+        "id": "todoBeacon.hackForeground",
+        "description": "Color used for HACK tags, in the editor and tree views.",
+        "defaults": { "dark": "#FFB454", "light": "#FFB454", "highContrast": "#FFB454" }
+      },
+      {
+        "id": "todoBeacon.noteForeground",
+        "description": "Color used for NOTE tags, in the editor and tree views.",
+        "defaults": { "dark": "#89D185", "light": "#89D185", "highContrast": "#89D185" }
+      },
+      {
+        "id": "todoBeacon.testForeground",
+        "description": "Color used for TEST tags, in the editor and tree views.",
+        "defaults": { "dark": "#B180D7", "light": "#B180D7", "highContrast": "#B180D7" }
+      },
+      {
+        "id": "todoBeacon.debugForeground",
+        "description": "Color used for DEBUG tags, in the editor and tree views.",
+        "defaults": { "dark": "#D16AD1", "light": "#D16AD1", "highContrast": "#D16AD1" }
+      },
+      {
+        "id": "todoBeacon.optimizeForeground",
+        "description": "Color used for OPTIMIZE/PERF tags, in the editor and tree views.",
+        "defaults": { "dark": "#FFB454", "light": "#FFB454", "highContrast": "#FFB454" }
+      },
+      {
+        "id": "todoBeacon.reviewForeground",
+        "description": "Color used for REVIEW tags, in the editor and tree views.",
+        "defaults": { "dark": "#F783AC", "light": "#F783AC", "highContrast": "#F783AC" }
+      },
+      {
+        "id": "todoBeacon.ideaForeground",
+        "description": "Color used for IDEA tags, in the editor and tree views.",
+        "defaults": { "dark": "#4EC9B0", "light": "#4EC9B0", "highContrast": "#4EC9B0" }
+      },
+      {
+        "id": "todoBeacon.warningForeground",
+        "description": "Color used for WARNING/WARN tags, in the editor and tree views.",
+        "defaults": { "dark": "#FF8C00", "light": "#FF8C00", "highContrast": "#FF8C00" }
+      },
+      {
+        "id": "todoBeacon.deprecatedForeground",
+        "description": "Color used for DEPRECATED tags, in the editor and tree views.",
+        "defaults": { "dark": "#888888", "light": "#888888", "highContrast": "#888888" }
+      },
+      {
+        "id": "todoBeacon.xxxForeground",
+        "description": "Color used for XXX tags, in the editor and tree views.",
+        "defaults": { "dark": "#F44747", "light": "#F44747", "highContrast": "#F44747" }
+      }
+    ],
+    "configuration": {
+      "title": "TODO Beacon",
+      "properties": {
+        "todo-beacon.tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "TODO",
+            "FIXME",
+            "BUG",
+            "HACK",
+            "NOTE",
+            "TEST",
+            "DEBUG",
+            "OPTIMIZE",
+            "PERF",
+            "REVIEW",
+            "IDEA",
+            "WARNING",
+            "WARN",
+            "DEPRECATED",
+            "XXX"
+          ],
+          "description": "Comment tags to detect in source files."
+        },
+        "todo-beacon.taskFile": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the task file relative to the workspace root. Leave empty to auto-detect (tries tasks.todo → TODO.md → todo.md → TASKS.md → tasks.md in order). Supports TaskPaper (.todo) and Markdown (.md) formats."
+        },
+        "todo-beacon.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/wwwroot/**",
+            "**/assets/**",
+            "**/out/**",
+            "**/.vscode-test/**",
+            "**/.angular/**",
+            "**/.next/**",
+            "**/.nuxt/**",
+            "**/.turbo/**",
+            "**/.cache/**",
+            "**/.parcel-cache/**",
+            "**/__pycache__/**",
+            "**/.pytest_cache/**",
+            "**/.mypy_cache/**",
+            "**/.ruff_cache/**",
+            "**/.tox/**",
+            "**/.gradle/**",
+            "**/.dart_tool/**",
+            "**/target/**"
+          ],
+          "description": "Glob patterns to exclude from code scanning."
+        },
+        "todo-beacon.maxFileSizeKb": {
+          "type": "number",
+          "default": 1024,
+          "description": "Maximum file size in KB to scan. Larger files are skipped."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p tsconfig.json --outDir out",
+    "watch-tests": "tsc -p tsconfig.json -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "precoverage": "npm run compile-tests && npm run compile",
+    "coverage": "vscode-test --coverage --coverage-reporter text --coverage-reporter lcov --coverage-reporter json-summary --coverage-output coverage",
+    "coverage:badge": "node scripts/coverage-badge.js",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/exec": "^6.0.0",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/github": "^10.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^24.0.0",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^8.0.0",
+    "husky": "^9.0.0",
+    "semantic-release": "^24.0.0",
+    "typescript": "^5.0.0"
+  }
+}

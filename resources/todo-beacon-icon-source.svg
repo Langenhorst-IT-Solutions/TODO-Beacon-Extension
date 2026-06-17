@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <rect width="256" height="256" rx="58" fill="#122E4F"/>
+  <!-- light beams -->
+  <polygon points="106,80 44,60 106,94" fill="#F7D38A"/>
+  <polygon points="150,80 212,60 150,94" fill="#F7D38A"/>
+  <polygon points="110,72 70,40 120,70" fill="#F7D38A"/>
+  <polygon points="146,72 186,40 136,70" fill="#F7D38A"/>
+  <!-- roof -->
+  <polygon points="128,40 98,67 158,67" fill="#0B2138"/>
+  <!-- lantern with check -->
+  <rect x="104" y="66" width="48" height="41" rx="8" fill="#F6A82C"/>
+  <path d="M114,87 L124,98 L143,75" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- gallery -->
+  <rect x="97" y="107" width="62" height="11" rx="2.5" fill="#0B2138"/>
+  <!-- tower -->
+  <polygon points="108,118 148,118 152,157 104,157" fill="#EAF1F8"/>
+  <polygon points="104,157 152,157 155,179 101,179" fill="#E2574C"/>
+  <polygon points="101,179 155,179 161,207 95,207" fill="#EAF1F8"/>
+  <!-- base -->
+  <rect x="86" y="206" width="84" height="17" rx="4.5" fill="#0B2138"/>
+</svg>

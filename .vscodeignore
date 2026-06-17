@@ -1,0 +1,39 @@
+# Development files — excluded from VSIX
+.claude/
+.cursor/
+.github/
+.husky/
+.vscode/
+.vscode-test/
+coverage/
+out/
+scripts/
+src/
+
+# Config & tooling
+.eslintrc.json
+.gitignore
+.releaserc.json
+.vscode-test.mjs
+commitlint.config.cjs
+commitlint.config.js
+esbuild.js
+tsconfig.json
+tsconfig.test.json
+
+# Docs / planning
+CONCEPT.md
+
+# Design sources / references (not needed at runtime)
+resources/todo-beacon-icon-source.svg
+resources/todo-beacon-icon-128.png
+resources/todo-beacon-preview.png
+
+# Lockfiles & deps
+node_modules/
+package-lock.json
+yarn.lock
+
+# Misc
+**/.DS_Store
+**/Thumbs.db
