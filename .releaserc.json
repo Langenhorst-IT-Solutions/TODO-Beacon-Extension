@@ -38,12 +38,6 @@
           }
         ]
       }
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        "publishCmd": "node scripts/vsce-publish.js ${nextRelease.version}"
-      }
     ]
   ]
 }
