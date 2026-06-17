@@ -48,9 +48,18 @@ export function activate(context: vscode.ExtensionContext): void {
   }
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('todo-beacon.refresh', () => { void refresh(); }),
+    vscode.commands.registerCommand('todo-beacon.refresh', async () => {
+      try {
+        await refresh();
+      } catch (err) {
+        void vscode.window.showErrorMessage(`TODO Beacon: Refresh failed — ${String(err)}`);
+      }
+    }),
 
-    vscode.commands.registerCommand('todo-beacon.openFile', (todo: TodoComment) => {
+    // Internal command — invoked only via tree item clicks, not the command palette.
+    // openFile is intentionally absent from contributes.commands to hide it from the palette.
+    vscode.commands.registerCommand('todo-beacon.openFile', (todo: TodoComment | undefined) => {
+      if (!todo) return;
       const folder = vscode.workspace.workspaceFolders?.[0];
       if (!folder) return;
       const uri = vscode.Uri.joinPath(folder.uri, todo.file);
