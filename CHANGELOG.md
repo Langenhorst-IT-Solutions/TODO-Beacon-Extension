@@ -1,3 +1,10 @@
+# [0.1.0-rc.2](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/compare/v0.1.0-rc.1...v0.1.0-rc.2) (2026-06-17)
+
+
+### Features
+
+* **highlight:** color-code tags with matching editor and tree icons ([56d4d55](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/commit/56d4d55915de0659a150802eda879fc4c7da346e))
+
 # [0.1.0-rc.1](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/compare/v0.0.0...v0.1.0-rc.1) (2026-06-17)
 
 
