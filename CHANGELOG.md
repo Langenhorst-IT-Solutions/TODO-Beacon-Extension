@@ -1,3 +1,16 @@
+# [1.0.0-rc.2](https://github.com/B1GSt4R/TODO-Beacon-Extension/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2026-06-17)
+
+
+### Bug Fixes
+
+* **commands:** hide openFile from palette, add error handling to refresh ([e20e398](https://github.com/B1GSt4R/TODO-Beacon-Extension/commit/e20e398114032e25942f5bd534ba77ed2510cf1f))
+* **scanner:** require colon after tag keyword to reduce false positives ([d6f395b](https://github.com/B1GSt4R/TODO-Beacon-Extension/commit/d6f395be552654f18e47da78f135ce228b822147))
+
+
+### Features
+
+* **ci:** make RC releases manual-only via workflow_dispatch ([ab52eb0](https://github.com/B1GSt4R/TODO-Beacon-Extension/commit/ab52eb0d906973197bd276eab2163aa9279f5a15))
+
 # 1.0.0-rc.1 (2026-06-17)
 
 
