@@ -183,6 +183,9 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
     "test": "vscode-test",
+    "precoverage": "npm run compile-tests && npm run compile",
+    "coverage": "vscode-test --coverage --coverage-reporter text --coverage-reporter lcov --coverage-reporter json-summary --coverage-output coverage",
+    "coverage:badge": "node scripts/coverage-badge.js",
     "prepare": "husky"
   },
   "devDependencies": {
