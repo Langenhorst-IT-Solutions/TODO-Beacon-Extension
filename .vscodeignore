@@ -5,6 +5,7 @@
 .husky/
 .vscode/
 .vscode-test/
+coverage/
 out/
 scripts/
 src/

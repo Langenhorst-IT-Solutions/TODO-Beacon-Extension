@@ -8,6 +8,7 @@ yarn-error.log*
 out/
 dist/
 *.vsix
+coverage/
 
 # VS Code extension test runner
 .vscode-test/

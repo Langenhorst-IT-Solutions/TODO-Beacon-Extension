@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   ci:
     name: Lint & Test
@@ -27,7 +30,19 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
-        run: xvfb-run -a npm test
+      - name: Run tests with coverage
+        run: xvfb-run -a npm run coverage
         env:
           HUSKY: 0
+
+      - name: Update coverage badge
+        if: github.event_name == 'push'
+        run: |
+          npm run coverage:badge
+          git add .github/badges/coverage.json
+          if ! git diff --cached --quiet -- .github/badges/coverage.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore(coverage): update coverage badge [skip ci]"
+            git push
+          fi
