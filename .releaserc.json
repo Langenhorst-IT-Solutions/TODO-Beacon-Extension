@@ -18,8 +18,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "node scripts/vsix-package.js ${nextRelease.version}",
-        "publishCmd": "node scripts/vsce-publish.js ${nextRelease.version}"
+        "prepareCmd": "node scripts/vsix-package.js ${nextRelease.version}"
       }
     ],
     [
@@ -38,6 +37,12 @@
             "label": "VS Code Extension (${nextRelease.gitTag})"
           }
         ]
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "publishCmd": "node scripts/vsce-publish.js ${nextRelease.version}"
       }
     ]
   ]

@@ -13,6 +13,13 @@
  *
  * Publishes the exact .vsix produced by the "prepare" step
  * (scripts/vsix-package.js), so what's published is what was tested.
+ *
+ * This runs as a *separate* @semantic-release/exec entry placed after
+ * @semantic-release/github in .releaserc.json's plugin list (deliberately
+ * split from the prepareCmd entry). semantic-release calls publish hooks in
+ * plugin-list order, so the GitHub release is always created first — if the
+ * Marketplace publish then fails (e.g. missing/expired VSCE_PAT), GitHub
+ * still has the release and the .vsix, which stays the source of truth.
  */
 
 const { spawnSync } = require('child_process');
