@@ -58,13 +58,8 @@
     "commands": [
       {
         "command": "todo-beacon.refresh",
-        "title": "Refresh",
+        "title": "Refresh TODOs",
         "icon": "$(refresh)",
-        "category": "TODO Beacon"
-      },
-      {
-        "command": "todo-beacon.openFile",
-        "title": "Open in Editor",
         "category": "TODO Beacon"
       }
     ],
