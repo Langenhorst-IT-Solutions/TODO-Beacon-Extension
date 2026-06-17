@@ -1,3 +1,10 @@
+# [1.0.0-rc.3](https://github.com/B1GSt4R/TODO-Beacon-Extension/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2026-06-17)
+
+
+### Features
+
+* **parser:** auto-detect task file, support Markdown format ([e99d4a9](https://github.com/B1GSt4R/TODO-Beacon-Extension/commit/e99d4a924365ec47b9e05be6b014124b8e90eab3))
+
 # [1.0.0-rc.2](https://github.com/B1GSt4R/TODO-Beacon-Extension/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2026-06-17)
 
 
