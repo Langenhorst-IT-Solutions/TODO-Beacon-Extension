@@ -6,11 +6,11 @@
 
 **Bridges code TODO comments and a managed task list — one task, two faces.**
 
-[![CI](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/B1GSt4R/TODO-Beacon-Extension/dev/.github/badges/coverage.json)](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml)
+[![CI](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/dev/.github/badges/coverage.json)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/Langenhorst-IT-Solutions.todo-beacon?label=marketplace)](https://marketplace.visualstudio.com/items?itemName=Langenhorst-IT-Solutions.todo-beacon)
 [![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Langenhorst-IT-Solutions.todo-beacon)](https://marketplace.visualstudio.com/items?itemName=Langenhorst-IT-Solutions.todo-beacon)
-[![License: MIT](https://img.shields.io/github/license/B1GSt4R/TODO-Beacon-Extension)](LICENSE)
+[![License: MIT](https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension)](LICENSE)
 
 </div>
 
@@ -80,7 +80,7 @@ VS Code `1.90.0` or newer.
 
 ## Contributing
 
-Issues and pull requests are welcome at [github.com/B1GSt4R/TODO-Beacon-Extension](https://github.com/B1GSt4R/TODO-Beacon-Extension). Planned features and design decisions are tracked in [ROADMAP.md](ROADMAP.md).
+Issues and pull requests are welcome at [github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension). Planned features and design decisions are tracked in [ROADMAP.md](ROADMAP.md).
 
 ```sh
 npm install
