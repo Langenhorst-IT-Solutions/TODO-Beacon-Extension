@@ -5,7 +5,16 @@
   "version": "0.1.0",
   "private": true,
   "publisher": "langenhorst-it-solutions",
+  "author": {
+    "name": "Dominic Langenhorst"
+  },
   "license": "MIT",
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#1B1F3B",
+    "theme": "dark"
+  },
+  "pricing": "Free",
   "repository": {
     "type": "git",
     "url": "https://github.com/B1GSt4R/TODO-Beacon-Extension.git"
@@ -24,11 +33,31 @@
     "todo",
     "fixme",
     "task",
+    "task list",
     "taskpaper",
-    "comment",
-    "productivity",
-    "time-tracking"
+    "markdown",
+    "comments",
+    "checklist",
+    "productivity"
   ],
+  "badges": [
+    {
+      "url": "https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=dev",
+      "href": "https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml",
+      "description": "CI status"
+    },
+    {
+      "url": "https://img.shields.io/github/license/B1GSt4R/TODO-Beacon-Extension",
+      "href": "https://github.com/B1GSt4R/TODO-Beacon-Extension/blob/main/LICENSE",
+      "description": "License"
+    }
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  },
   "activationEvents": [
     "onStartupFinished"
   ],
