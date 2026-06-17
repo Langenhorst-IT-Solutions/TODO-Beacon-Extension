@@ -2,7 +2,7 @@
   "name": "todo-beacon",
   "displayName": "TODO Beacon",
   "description": "Bridges code TODO comments and a managed task list — one task, two faces.",
-  "version": "1.0.0-beta.1",
+  "version": "0.1.0",
   "private": true,
   "publisher": "langenhorst-it-solutions",
   "license": "MIT",
