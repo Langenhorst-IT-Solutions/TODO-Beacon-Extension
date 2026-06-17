@@ -101,8 +101,8 @@
         },
         "todo-beacon.taskFile": {
           "type": "string",
-          "default": "tasks.todo",
-          "description": "Path to the TaskPaper task file, relative to the workspace root."
+          "default": "",
+          "description": "Path to the task file relative to the workspace root. Leave empty to auto-detect (tries tasks.todo → TODO.md → todo.md → TASKS.md → tasks.md in order). Supports TaskPaper (.todo) and Markdown (.md) formats."
         },
         "todo-beacon.exclude": {
           "type": "array",

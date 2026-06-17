@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
 import { CodeScanner } from './scanner/CodeScanner';
 import { TaskPaperParser } from './parser/TaskPaperParser';
+import { MarkdownTaskParser } from './parser/MarkdownTaskParser';
 import { CodeTodoTreeProvider, TaskListTreeProvider } from './tree/TodoTreeProvider';
-import { TodoComment } from './types';
+import { TodoComment, Project } from './types';
+
+const TASK_FILE_CANDIDATES = ['tasks.todo', 'TODO.md', 'todo.md', 'TASKS.md', 'tasks.md'];
 
 export function activate(context: vscode.ExtensionContext): void {
   const config = vscode.workspace.getConfiguration('todo-beacon');
@@ -11,7 +14,8 @@ export function activate(context: vscode.ExtensionContext): void {
     config.get<string[]>('tags') ?? ['TODO', 'FIXME', 'BUG', 'HACK', 'NOTE'],
     (config.get<number>('maxFileSizeKb') ?? 1024) * 1024,
   );
-  const parser = new TaskPaperParser();
+  const taskPaperParser = new TaskPaperParser();
+  const markdownParser = new MarkdownTaskParser();
   const codeProvider = new CodeTodoTreeProvider();
   const listProvider = new TaskListTreeProvider();
 
@@ -21,27 +25,61 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   const excludePatterns = config.get<string[]>('exclude') ?? [];
-  const taskFile = config.get<string>('taskFile') ?? 'tasks.todo';
+  // Empty string → auto-detect; any other value → use exactly that path.
+  const configuredTaskFile = config.get<string>('taskFile') || undefined;
+
+  async function resolveTaskFile(): Promise<{ uri: vscode.Uri; relativePath: string } | null> {
+    const folder = vscode.workspace.workspaceFolders?.[0];
+    if (!folder) return null;
+
+    const candidates = configuredTaskFile ? [configuredTaskFile] : TASK_FILE_CANDIDATES;
+
+    for (const name of candidates) {
+      const uri = vscode.Uri.joinPath(folder.uri, name);
+      try {
+        await vscode.workspace.fs.stat(uri);
+        return { uri, relativePath: name };
+      } catch {
+        // file not found — try next candidate
+      }
+    }
+    return null;
+  }
+
+  function parseTaskFile(content: string, relativePath: string): Project[] {
+    if (/\.md$/i.test(relativePath) || /\.markdown$/i.test(relativePath)) {
+      return markdownParser.parse(content);
+    }
+    return taskPaperParser.parse(content);
+  }
 
   async function refresh(): Promise<void> {
+    const taskFile = await resolveTaskFile();
+
+    // Exclude the task file from the code scanner so its content doesn't
+    // appear under "Code TODOs" — it belongs in the "Task List" view only.
+    const scanExcludes = taskFile
+      ? [...excludePatterns, taskFile.relativePath]
+      : excludePatterns;
+
     const [todos] = await Promise.all([
-      scanner.scan(excludePatterns),
-      refreshTaskList(),
+      scanner.scan(scanExcludes),
+      refreshTaskList(taskFile),
     ]);
     codeProvider.update(todos);
   }
 
-  async function refreshTaskList(): Promise<void> {
-    const folder = vscode.workspace.workspaceFolders?.[0];
-    if (!folder) {
+  async function refreshTaskList(
+    taskFile: { uri: vscode.Uri; relativePath: string } | null,
+  ): Promise<void> {
+    if (!taskFile) {
       listProvider.update([]);
       return;
     }
-    const uri = vscode.Uri.joinPath(folder.uri, taskFile);
     try {
-      const bytes = await vscode.workspace.fs.readFile(uri);
+      const bytes = await vscode.workspace.fs.readFile(taskFile.uri);
       const content = new TextDecoder('utf-8').decode(bytes);
-      listProvider.update(parser.parse(content));
+      listProvider.update(parseTaskFile(content, taskFile.relativePath));
     } catch {
       listProvider.update([]);
     }
@@ -56,8 +94,6 @@ export function activate(context: vscode.ExtensionContext): void {
       }
     }),
 
-    // Internal command — invoked only via tree item clicks, not the command palette.
-    // openFile is intentionally absent from contributes.commands to hide it from the palette.
     vscode.commands.registerCommand('todo-beacon.openFile', (todo: TodoComment | undefined) => {
       if (!todo) return;
       const folder = vscode.workspace.workspaceFolders?.[0];
@@ -70,7 +106,6 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
   );
 
-  // Incremental: re-scan only on file save (not on every keystroke)
   const watcher = vscode.workspace.createFileSystemWatcher('**/*');
   let refreshTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -89,6 +124,4 @@ export function activate(context: vscode.ExtensionContext): void {
   void refresh();
 }
 
-export function deactivate(): void {
-  // nothing to clean up — subscriptions handle disposal
-}
+export function deactivate(): void {}
