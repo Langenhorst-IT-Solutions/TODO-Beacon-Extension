@@ -2,6 +2,11 @@ import * as vscode from 'vscode';
 import { TodoComment } from '../types';
 
 export class CodeScanner {
+  // Matches the start of a line/block comment (//, #, /*, <!--). A tag is
+  // only treated as a TODO when it appears at or after one of these, so
+  // e.g. CSS selectors like ".btn-warn:hover {" aren't picked up.
+  private static readonly commentMarkerPattern = /\/\/|\/\*|<!--|#/;
+
   private readonly tagPattern: RegExp;
 
   constructor(
@@ -60,11 +65,25 @@ export class CodeScanner {
   parseLines(content: string, filePath: string): TodoComment[] {
     const lines = content.split(/\r?\n/);
     const results: TodoComment[] = [];
+    const isMarkdown = /\.mdx?$/i.test(filePath);
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
+      // Markdown headings (e.g. "# Code Review: ...") are titles, not TODO
+      // comments, even when a tag word happens to appear before the colon.
+      if (isMarkdown && /^\s*#{1,6}\s+/.test(line)) continue;
+
       const match = this.tagPattern.exec(line);
       if (!match) continue;
+
+      // Markdown prose has no comment syntax of its own, so the colon-tag
+      // check above is sufficient there. Everywhere else, require the tag
+      // to actually sit inside a comment (fixes e.g. CSS selectors like
+      // ".btn-warn:hover {" being mistaken for a "WARN:" tag).
+      if (!isMarkdown) {
+        const commentMarker = CodeScanner.commentMarkerPattern.exec(line);
+        if (!commentMarker || commentMarker.index > match.index) continue;
+      }
 
       const column = line.indexOf(match[1]);
       const id = extractId(match[2] ?? '');
