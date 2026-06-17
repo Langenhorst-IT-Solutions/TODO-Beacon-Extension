@@ -18,7 +18,8 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "node scripts/vsix-package.js ${nextRelease.version}"
+        "prepareCmd": "node scripts/vsix-package.js ${nextRelease.version}",
+        "publishCmd": "node scripts/vsce-publish.js ${nextRelease.version}"
       }
     ],
     [
