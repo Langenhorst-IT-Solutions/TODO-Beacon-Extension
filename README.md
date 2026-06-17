@@ -8,8 +8,8 @@
 
 [![CI](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/B1GSt4R/TODO-Beacon-Extension/dev/.github/badges/coverage.json)](https://github.com/B1GSt4R/TODO-Beacon-Extension/actions/workflows/ci.yml)
-[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/langenhorst-it-solutions.todo-beacon?label=marketplace)](https://marketplace.visualstudio.com/items?itemName=langenhorst-it-solutions.todo-beacon)
-[![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/langenhorst-it-solutions.todo-beacon)](https://marketplace.visualstudio.com/items?itemName=langenhorst-it-solutions.todo-beacon)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/Langenhorst-IT-Solutions.todo-beacon?label=marketplace)](https://marketplace.visualstudio.com/items?itemName=Langenhorst-IT-Solutions.todo-beacon)
+[![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Langenhorst-IT-Solutions.todo-beacon)](https://marketplace.visualstudio.com/items?itemName=Langenhorst-IT-Solutions.todo-beacon)
 [![License: MIT](https://img.shields.io/github/license/B1GSt4R/TODO-Beacon-Extension)](LICENSE)
 
 </div>
