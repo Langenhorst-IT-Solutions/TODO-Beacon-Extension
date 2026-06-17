@@ -14,7 +14,13 @@ export class TaskPaperParser {
 
       // Project: non-task line ending with ":"
       if (!trimmed.startsWith('-') && trimmed.endsWith(':')) {
-        currentProject = { name: trimmed.slice(0, -1).trim(), tasks: [], lineNumber: i };
+        currentProject = {
+          name: trimmed.slice(0, -1).trim(),
+          tasks: [],
+          lineNumber: i,
+          level: 0,
+          children: [],
+        };
         projects.push(currentProject);
         continue;
       }
@@ -23,7 +29,7 @@ export class TaskPaperParser {
       if (trimmed.startsWith('- ')) {
         const task = parseTask(trimmed.slice(2), i);
         if (!currentProject) {
-          currentProject = { name: '', tasks: [], lineNumber: -1 };
+          currentProject = { name: '', tasks: [], lineNumber: -1, level: 0, children: [] };
           projects.unshift(currentProject);
         }
         currentProject.tasks.push(task);
@@ -61,7 +67,7 @@ function parseTask(text: string, lineNumber: number): Task {
     .replace(/\(#[a-f0-9]{4,8}\)/g, '')
     .trim();
 
-  return { id, text: cleanText, status, tags, lineNumber };
+  return { id, text: cleanText, status, tags, lineNumber, file: '' };
 }
 
 function extractId(text: string): string | null {

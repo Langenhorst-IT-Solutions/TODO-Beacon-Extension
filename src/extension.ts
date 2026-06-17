@@ -3,7 +3,7 @@ import { CodeScanner } from './scanner/CodeScanner';
 import { TaskPaperParser } from './parser/TaskPaperParser';
 import { MarkdownTaskParser } from './parser/MarkdownTaskParser';
 import { CodeTodoTreeProvider, TaskListTreeProvider } from './tree/TodoTreeProvider';
-import { TodoComment, Project } from './types';
+import { OpenTarget, Project } from './types';
 
 const TASK_FILE_CANDIDATES = ['tasks.todo', 'TODO.md', 'todo.md', 'TASKS.md', 'tasks.md'];
 
@@ -47,10 +47,20 @@ export function activate(context: vscode.ExtensionContext): void {
   }
 
   function parseTaskFile(content: string, relativePath: string): Project[] {
-    if (/\.md$/i.test(relativePath) || /\.markdown$/i.test(relativePath)) {
-      return markdownParser.parse(content);
+    const projects = /\.md$/i.test(relativePath) || /\.markdown$/i.test(relativePath)
+      ? markdownParser.parse(content)
+      : taskPaperParser.parse(content);
+    attachFile(projects, relativePath);
+    return projects;
+  }
+
+  function attachFile(projects: Project[], relativePath: string): void {
+    for (const project of projects) {
+      for (const task of project.tasks) {
+        task.file = relativePath;
+      }
+      attachFile(project.children, relativePath);
     }
-    return taskPaperParser.parse(content);
   }
 
   async function refresh(): Promise<void> {
@@ -94,13 +104,13 @@ export function activate(context: vscode.ExtensionContext): void {
       }
     }),
 
-    vscode.commands.registerCommand('todo-beacon.openFile', (todo: TodoComment | undefined) => {
-      if (!todo) return;
+    vscode.commands.registerCommand('todo-beacon.openFile', (target: OpenTarget | undefined) => {
+      if (!target) return;
       const folder = vscode.workspace.workspaceFolders?.[0];
       if (!folder) return;
-      const uri = vscode.Uri.joinPath(folder.uri, todo.file);
+      const uri = vscode.Uri.joinPath(folder.uri, target.file);
       void vscode.window.showTextDocument(uri, {
-        selection: new vscode.Range(todo.line, todo.column, todo.line, todo.column),
+        selection: new vscode.Range(target.line, target.column, target.line, target.column),
         preserveFocus: false,
       });
     }),
