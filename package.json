@@ -9,7 +9,7 @@
     "name": "Dominic Langenhorst"
   },
   "license": "MIT",
-  "icon": "resources/icon.png",
+  "icon": "resources/todo-beacon-icon.png",
   "galleryBanner": {
     "color": "#1B1F3B",
     "theme": "dark"
@@ -68,7 +68,7 @@
         {
           "id": "todo-beacon",
           "title": "TODO Beacon",
-          "icon": "resources/icon.svg"
+          "icon": "resources/todo-beacon-activitybar.svg"
         }
       ]
     },
