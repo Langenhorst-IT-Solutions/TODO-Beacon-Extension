@@ -22,13 +22,20 @@ export class CodeScanner {
     this.tagPattern = new RegExp(`\\b(${escaped})\\b\\s*:\\s*(.*)`, 'i');
   }
 
-  async scan(excludePatterns: string[]): Promise<TodoComment[]> {
+  async scan(
+    excludePatterns: string[],
+    fileFilter?: (relPath: string) => boolean,
+  ): Promise<TodoComment[]> {
     const excludeGlob =
       excludePatterns.length > 0 ? `{${excludePatterns.join(',')}}` : undefined;
     const files = await vscode.workspace.findFiles('**/*', excludeGlob);
 
     const results: TodoComment[] = [];
     for (const file of files) {
+      if (fileFilter) {
+        const relPath = vscode.workspace.asRelativePath(file);
+        if (!fileFilter(relPath)) continue;
+      }
       const todos = await this.scanFile(file);
       results.push(...todos);
     }
