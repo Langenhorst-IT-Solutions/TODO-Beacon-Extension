@@ -12,6 +12,7 @@ src/
 
 # Config & tooling
 .eslintrc.json
+eslint.config.mjs
 .gitignore
 .releaserc.cjs
 .vscode-test.mjs
@@ -21,8 +22,12 @@ esbuild.js
 tsconfig.json
 tsconfig.test.json
 
-# Docs / planning
+# Docs / planning (developer-facing, not needed by end users)
 CONCEPT.md
+CLAUDE.md
+CONTRIBUTING.md
+ROADMAP.md
+docs/
 
 # Marketing/screenshot assets — not needed at runtime
 marketing-assets/
