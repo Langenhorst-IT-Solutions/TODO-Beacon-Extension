@@ -66,14 +66,28 @@ export class CodeScanner {
     const lines = content.split(/\r?\n/);
     const results: TodoComment[] = [];
     const isMarkdown = /\.mdx?$/i.test(filePath);
+    let inFencedBlock = false;
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      // Markdown headings (e.g. "# Code Review: ...") are titles, not TODO
-      // comments, even when a tag word happens to appear before the colon.
-      if (isMarkdown && /^\s*#{1,6}\s+/.test(line)) continue;
 
-      const match = this.tagPattern.exec(line);
+      if (isMarkdown) {
+        // Toggle fenced code block state on opening/closing fence (``` or ~~~)
+        if (/^\s*(`{3,}|~{3,})/.test(line)) {
+          inFencedBlock = !inFencedBlock;
+          continue;
+        }
+        if (inFencedBlock) continue;
+        // Markdown headings (e.g. "# Code Review: ...") are titles, not TODO
+        // comments, even when a tag word happens to appear before the colon.
+        if (/^\s*#{1,6}\s+/.test(line)) continue;
+      }
+
+      // For Markdown, mask inline code spans (e.g. `WARN:`) so tags inside
+      // backticks are not matched. The mask preserves string length so
+      // match positions stay aligned with the original line.
+      const matchLine = isMarkdown ? maskInlineCode(line) : line;
+      const match = this.tagPattern.exec(matchLine);
       if (!match) continue;
 
       // Markdown prose has no comment syntax of its own, so the colon-tag
@@ -114,4 +128,8 @@ function isBinary(bytes: Uint8Array): boolean {
 function extractId(text: string): string | null {
   const match = /\(#([a-f0-9]{4,8})\)/.exec(text);
   return match ? match[1] : null;
+}
+
+function maskInlineCode(line: string): string {
+  return line.replace(/`[^`]*`/g, m => ' '.repeat(m.length));
 }
