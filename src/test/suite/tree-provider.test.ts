@@ -255,25 +255,89 @@ suite('TaskListTreeProvider', () => {
     assert.strictEqual(item.label, '(empty)');
   });
 
-  test('TaskListItem with done status has check icon', () => {
+  test('TaskListItem with done status has check icon with green color', () => {
     const t: Task = { id: null, text: 'done task', status: 'done', tags: {}, lineNumber: 0, file: 'f.md' };
     const item = new TaskListItem(t);
-    const icon = item.iconPath as unknown as { id: string };
+    const icon = item.iconPath as unknown as { id: string; color: { id: string } };
     assert.strictEqual(icon.id, 'check');
+    assert.strictEqual(icon.color.id, 'todoBeacon.taskDoneForeground');
   });
 
-  test('TaskListItem with cancelled status has close icon', () => {
+  test('TaskListItem with cancelled status has close icon with grey color', () => {
     const t: Task = { id: null, text: 'cancelled task', status: 'cancelled', tags: {}, lineNumber: 0, file: 'f.md' };
     const item = new TaskListItem(t);
-    const icon = item.iconPath as unknown as { id: string };
+    const icon = item.iconPath as unknown as { id: string; color: { id: string } };
     assert.strictEqual(icon.id, 'close');
+    assert.strictEqual(icon.color.id, 'todoBeacon.taskCancelledForeground');
   });
 
-  test('TaskListItem with open status has circle-outline icon', () => {
+  test('TaskListItem with open status has circle-outline icon with blue color', () => {
     const t: Task = { id: null, text: 'open task', status: 'open', tags: {}, lineNumber: 0, file: 'f.md' };
     const item = new TaskListItem(t);
-    const icon = item.iconPath as unknown as { id: string };
+    const icon = item.iconPath as unknown as { id: string; color: { id: string } };
     assert.strictEqual(icon.id, 'circle-outline');
+    assert.strictEqual(icon.color.id, 'todoBeacon.taskOpenForeground');
+  });
+
+  // ─── TaskProjectItem — counts and folder color ───────────────────────────
+
+  test('TaskProjectItem with only open tasks shows count and orange folder', () => {
+    const t: Task = { id: null, text: 'open', status: 'open', tags: {}, lineNumber: 1, file: 'f.md' };
+    const p: Project = { name: 'Work', tasks: [t], lineNumber: 0, level: 1, children: [] };
+    const item = new TaskProjectItem(p);
+    const icon = item.iconPath as unknown as { id: string; color: { id: string } };
+    assert.strictEqual(icon.id, 'folder');
+    assert.strictEqual(icon.color.id, 'todoBeacon.taskFolderPartialForeground');
+    assert.ok((item.description as string).includes('1 open'));
+  });
+
+  test('TaskProjectItem with all tasks done shows green folder', () => {
+    const t: Task = { id: null, text: 'done', status: 'done', tags: {}, lineNumber: 1, file: 'f.md' };
+    const p: Project = { name: 'Work', tasks: [t], lineNumber: 0, level: 1, children: [] };
+    const item = new TaskProjectItem(p);
+    const icon = item.iconPath as unknown as { id: string; color: { id: string } };
+    assert.strictEqual(icon.id, 'folder');
+    assert.strictEqual(icon.color.id, 'todoBeacon.taskDoneForeground');
+    assert.ok((item.description as string).includes('1 done'));
+    assert.ok(!(item.description as string).includes('open'));
+  });
+
+  test('TaskProjectItem with mixed tasks shows open and done count', () => {
+    const open: Task = { id: null, text: 'a', status: 'open', tags: {}, lineNumber: 1, file: 'f.md' };
+    const done: Task = { id: null, text: 'b', status: 'done', tags: {}, lineNumber: 2, file: 'f.md' };
+    const done2: Task = { id: null, text: 'c', status: 'done', tags: {}, lineNumber: 3, file: 'f.md' };
+    const p: Project = { name: 'Work', tasks: [open, done, done2], lineNumber: 0, level: 1, children: [] };
+    const item = new TaskProjectItem(p);
+    assert.ok((item.description as string).includes('1 open'));
+    assert.ok((item.description as string).includes('2 done'));
+  });
+
+  test('TaskProjectItem with no tasks has no description and default folder', () => {
+    const p: Project = { name: 'Empty', tasks: [], lineNumber: 0, level: 1, children: [] };
+    const item = new TaskProjectItem(p);
+    const icon = item.iconPath as unknown as { id: string; color?: unknown };
+    assert.strictEqual(icon.id, 'folder');
+    assert.strictEqual(icon.color, undefined);
+    assert.ok(!item.description);
+  });
+
+  test('TaskProjectItem counts tasks from sub-projects recursively', () => {
+    const childTask: Task = { id: null, text: 'sub', status: 'done', tags: {}, lineNumber: 2, file: 'f.md' };
+    const child: Project = { name: 'Sub', tasks: [childTask], lineNumber: 1, level: 2, children: [] };
+    const rootTask: Task = { id: null, text: 'root', status: 'open', tags: {}, lineNumber: 3, file: 'f.md' };
+    const root: Project = { name: 'Work', tasks: [rootTask], lineNumber: 0, level: 1, children: [child] };
+    const item = new TaskProjectItem(root);
+    assert.ok((item.description as string).includes('1 open'));
+    assert.ok((item.description as string).includes('1 done'));
+  });
+
+  test('TaskProjectItem with only cancelled tasks has green (all-done) folder and no open/done in description', () => {
+    const t: Task = { id: null, text: 'x', status: 'cancelled', tags: {}, lineNumber: 1, file: 'f.md' };
+    const p: Project = { name: 'Work', tasks: [t], lineNumber: 0, level: 1, children: [] };
+    const item = new TaskProjectItem(p);
+    const icon = item.iconPath as unknown as { id: string; color: { id: string } };
+    assert.strictEqual(icon.color.id, 'todoBeacon.taskDoneForeground');
+    assert.strictEqual(item.description, '');
   });
 
   test('TaskListItem description lists bare tags with @ prefix', () => {

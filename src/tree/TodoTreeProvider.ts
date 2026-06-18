@@ -80,7 +80,24 @@ export class TaskProjectItem extends vscode.TreeItem {
       hasChildren ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None,
     );
     this.contextValue = 'taskProject';
-    this.iconPath = new vscode.ThemeIcon('folder');
+
+    const counts = countTasksDeep(project);
+    const total = counts.open + counts.done + counts.cancelled;
+
+    if (total > 0) {
+      const parts: string[] = [];
+      if (counts.open > 0) { parts.push(`${counts.open} open`); }
+      if (counts.done > 0) { parts.push(`${counts.done} done`); }
+      this.description = parts.join(' · ');
+
+      if (counts.open === 0) {
+        this.iconPath = new vscode.ThemeIcon('folder', new vscode.ThemeColor('todoBeacon.taskDoneForeground'));
+      } else {
+        this.iconPath = new vscode.ThemeIcon('folder', new vscode.ThemeColor('todoBeacon.taskFolderPartialForeground'));
+      }
+    } else {
+      this.iconPath = new vscode.ThemeIcon('folder');
+    }
   }
 }
 
@@ -177,9 +194,29 @@ function groupByTag(todos: TodoComment[]): Map<string, TodoComment[]> {
 }
 
 function statusIcon(status: string): vscode.ThemeIcon {
-  if (status === 'done') return new vscode.ThemeIcon('check');
-  if (status === 'cancelled') return new vscode.ThemeIcon('close');
-  return new vscode.ThemeIcon('circle-outline');
+  if (status === 'done') {
+    return new vscode.ThemeIcon('check', new vscode.ThemeColor('todoBeacon.taskDoneForeground'));
+  }
+  if (status === 'cancelled') {
+    return new vscode.ThemeIcon('close', new vscode.ThemeColor('todoBeacon.taskCancelledForeground'));
+  }
+  return new vscode.ThemeIcon('circle-outline', new vscode.ThemeColor('todoBeacon.taskOpenForeground'));
+}
+
+interface TaskCounts { open: number; done: number; cancelled: number }
+
+function countTasksDeep(project: Project): TaskCounts {
+  const counts: TaskCounts = { open: 0, done: 0, cancelled: 0 };
+  for (const task of project.tasks) {
+    counts[task.status]++;
+  }
+  for (const child of project.children) {
+    const sub = countTasksDeep(child);
+    counts.open += sub.open;
+    counts.done += sub.done;
+    counts.cancelled += sub.cancelled;
+  }
+  return counts;
 }
 
 function tagSummary(tags: Record<string, string | boolean>): string {

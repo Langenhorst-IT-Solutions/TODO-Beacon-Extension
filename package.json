@@ -231,6 +231,42 @@
           "light": "#F44747",
           "highContrast": "#F44747"
         }
+      },
+      {
+        "id": "todoBeacon.taskOpenForeground",
+        "description": "Color used for open task items in the Task List view.",
+        "defaults": {
+          "dark": "#3794FF",
+          "light": "#1166CC",
+          "highContrast": "#3794FF"
+        }
+      },
+      {
+        "id": "todoBeacon.taskDoneForeground",
+        "description": "Color used for completed task items and fully-done project folders in the Task List view.",
+        "defaults": {
+          "dark": "#89D185",
+          "light": "#3A7A3A",
+          "highContrast": "#89D185"
+        }
+      },
+      {
+        "id": "todoBeacon.taskCancelledForeground",
+        "description": "Color used for cancelled task items in the Task List view.",
+        "defaults": {
+          "dark": "#888888",
+          "light": "#888888",
+          "highContrast": "#888888"
+        }
+      },
+      {
+        "id": "todoBeacon.taskFolderPartialForeground",
+        "description": "Color used for project folders that still have open tasks in the Task List view.",
+        "defaults": {
+          "dark": "#E2A33D",
+          "light": "#A0651A",
+          "highContrast": "#E2A33D"
+        }
       }
     ],
     "configuration": {
