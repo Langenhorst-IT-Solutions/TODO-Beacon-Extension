@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const THRESHOLD = 80;
+const THRESHOLD = 95;
 const summaryPath = path.join(__dirname, '..', 'coverage', 'coverage-summary.json');
 
 if (!fs.existsSync(summaryPath)) {

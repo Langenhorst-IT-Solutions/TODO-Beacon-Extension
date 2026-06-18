@@ -111,4 +111,37 @@ suite('MarkdownTaskParser', () => {
     assert.strictEqual(result[0].children[0].name, 'Deep');
     assert.strictEqual(result[0].children[1].name, 'Shallower');
   });
+
+  // ─── Additional edge cases ───────────────────────────────────────────────
+
+  test('task without id has null id', () => {
+    const result = parser.parse('## P\n- [ ] task without id');
+    assert.strictEqual(result[0].tasks[0].id, null);
+  });
+
+  test('skips empty and whitespace-only lines', () => {
+    const result = parser.parse('## P\n\n   \n- [ ] task');
+    assert.strictEqual(result[0].tasks.length, 1);
+  });
+
+  test('task lineNumber reflects 0-indexed position in content', () => {
+    const result = parser.parse('## P\n- [ ] first\n- [ ] second');
+    assert.strictEqual(result[0].tasks[0].lineNumber, 1);
+    assert.strictEqual(result[0].tasks[1].lineNumber, 2);
+  });
+
+  test('project lineNumber is the 0-indexed heading line', () => {
+    const result = parser.parse('first line\n## Work\n- [ ] task');
+    assert.strictEqual(result[0].lineNumber, 1);
+  });
+
+  test('content with only whitespace returns empty array', () => {
+    assert.deepStrictEqual(parser.parse('   \n\n  '), []);
+  });
+
+  test('task text with only the id marker becomes empty string', () => {
+    const result = parser.parse('## P\n- [ ] (#abc1)');
+    assert.strictEqual(result[0].tasks[0].text, '');
+    assert.strictEqual(result[0].tasks[0].id, 'abc1');
+  });
 });

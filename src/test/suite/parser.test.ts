@@ -75,4 +75,39 @@ suite('TaskPaperParser', () => {
     const result = parser.parse('Project:\r\n- Task A\r\n- Task B');
     assert.strictEqual(result[0].tasks.length, 2);
   });
+
+  test('parses @canceled (one l) as cancelled status', () => {
+    const result = parser.parse('Project:\n- Task one @canceled');
+    assert.strictEqual(result[0].tasks[0].status, 'cancelled');
+  });
+
+  test('@done and @cancelled are not stored as tags, only as status', () => {
+    const result = parser.parse('Project:\n- Task @done');
+    const task = result[0].tasks[0];
+    assert.strictEqual(task.status, 'done');
+    assert.ok(!('done' in task.tags));
+  });
+
+  test('@cancelled is not stored as a tag', () => {
+    const result = parser.parse('Project:\n- Task @cancelled');
+    const task = result[0].tasks[0];
+    assert.strictEqual(task.status, 'cancelled');
+    assert.ok(!('cancelled' in task.tags));
+  });
+
+  test('task with id null when no stable id present', () => {
+    const result = parser.parse('Project:\n- Task without id');
+    assert.strictEqual(result[0].tasks[0].id, null);
+  });
+
+  test('task text is empty string when only tags remain after stripping', () => {
+    const result = parser.parse('Project:\n- @done');
+    assert.strictEqual(result[0].tasks[0].text, '');
+  });
+
+  test('non-task, non-project lines are ignored', () => {
+    const result = parser.parse('Project:\nsome random text\n- Task');
+    assert.strictEqual(result[0].tasks.length, 1);
+    assert.strictEqual(result[0].tasks[0].text, 'Task');
+  });
 });
