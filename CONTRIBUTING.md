@@ -27,9 +27,9 @@ DEPRECATED: todo-beacon.oldSetting is deprecated, use todo-beacon.newSetting ins
 Actually removing something **is** a breaking change — use `!` after the type (forces a major version bump) and add a `REMOVED:` footer so it gets its own changelog section:
 
 ```
-feat!: drop support for VS Code < 1.90
+feat!: drop support for VS Code < 1.125
 
-REMOVED: dropped compatibility shims for VS Code versions older than 1.90
+REMOVED: dropped compatibility shims for VS Code versions older than 1.125
 ```
 
 ## Changelog
@@ -42,13 +42,13 @@ This repo follows [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/
 
 - **`main`** — stable, released code. Only the maintainer (repo owner) pushes to or merges into `main`, with or without a PR.
 - **`dev`** — integration branch for the next release. Anyone who isn't a maintainer must open a pull request against `dev`; direct pushes by non-maintainers are blocked by branch protection.
-- **Feature/fix branches** — branch off `dev`, open a PR back into `dev`. PRs need the `Lint & Test` status check to pass and a maintainer's approval before merging. `Lint & Test` includes a coverage check — line coverage must stay at or above **80%**, or the check fails.
+- **Feature/fix branches** — branch off `dev`, open a PR back into `dev`. PRs need the `Lint & Test` status check to pass and a maintainer's approval before merging. `Lint & Test` includes a coverage check — line coverage must stay at or above **95%**, or the check fails.
 - **Release Candidates** — published from `dev` via the `Release RC` GitHub Actions workflow. This workflow is `workflow_dispatch`-only and is triggered exclusively by the maintainer.
 - **Stable releases** — published automatically by CI whenever the maintainer pushes/merges to `main`. Right after the release commit lands on `main`, CI merges it straight back into `dev` (no PR needed for this step — it only ever replays a commit that was already reviewed and released on `main`), so `dev` never drifts behind the latest release.
 
 ## Local setup
 
-**Prerequisites:** Node.js 20+ and VS Code 1.90+.
+**Prerequisites:** Node.js 20+ and VS Code 1.125+.
 
 ```sh
 npm install           # install all dependencies
@@ -63,7 +63,7 @@ npm run check-types   # TypeScript type check without emitting files
 npm run lint          # ESLint
 npm test              # compile + run the full Mocha suite inside a VS Code host
 npm run coverage      # same as test, with lcov/text/json-summary output
-npm run coverage:check # fails if line coverage is below the 80% threshold
+npm run coverage:check # fails if line coverage is below the 95% threshold
 ```
 
 To produce a standalone `.vsix` package (e.g. to install manually via *Install from VSIX…* in VS Code):
