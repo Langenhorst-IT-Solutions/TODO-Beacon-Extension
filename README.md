@@ -83,7 +83,7 @@ Personal:
 
 ## Requirements
 
-VS Code `1.90.0` or newer.
+VS Code `1.125.0` or newer.
 
 ## Contributing
 

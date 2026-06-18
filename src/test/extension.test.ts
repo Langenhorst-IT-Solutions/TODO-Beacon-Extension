@@ -30,4 +30,21 @@ suite('Extension Activation', () => {
       'Command todo-beacon.openFile not found',
     );
   });
+
+  test('todo-beacon.refresh executes without error', async () => {
+    await assert.doesNotReject(Promise.resolve(vscode.commands.executeCommand('todo-beacon.refresh')));
+  });
+
+  test('todo-beacon.openFile with undefined target returns without error', async () => {
+    await assert.doesNotReject(
+      Promise.resolve(vscode.commands.executeCommand('todo-beacon.openFile', undefined)),
+    );
+  });
+
+  test('todo-beacon.openFile with a valid target does not throw', async () => {
+    const target = { file: 'TASKS.md', line: 0, column: 0 };
+    await assert.doesNotReject(
+      Promise.resolve(vscode.commands.executeCommand('todo-beacon.openFile', target)),
+    );
+  });
 });

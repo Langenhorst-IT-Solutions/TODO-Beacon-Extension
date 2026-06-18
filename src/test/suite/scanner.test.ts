@@ -257,4 +257,44 @@ suite('CodeScanner.parseLines', () => {
     const result = scanner.parseLines('// TODO: plain comment', 'f.ts');
     assert.strictEqual(result[0].id, null);
   });
+
+  // ─── rawLine ─────────────────────────────────────────────────────────────
+
+  test('rawLine is the trimEnd of the original line', () => {
+    const result = scanner.parseLines('  // TODO: trailing spaces   ', 'f.ts');
+    assert.strictEqual(result[0].rawLine, '  // TODO: trailing spaces');
+  });
+
+  // ─── MDX file support ────────────────────────────────────────────────────
+
+  test('treats .mdx files as Markdown (headings excluded)', () => {
+    const result = scanner.parseLines('## TODO: heading in mdx', 'page.mdx');
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('matches TODO in .mdx prose', () => {
+    const result = scanner.parseLines('TODO: fix in mdx', 'page.mdx');
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].tag, 'TODO');
+  });
+
+  // ─── Fenced block edge cases ─────────────────────────────────────────────
+
+  test('fenced block opened with 4+ backticks is still excluded', () => {
+    const content = ['````', '// TODO: inside', '````'].join('\n');
+    const result = scanner.parseLines(content, 'file.md');
+    assert.deepStrictEqual(result, []);
+  });
+
+  // ─── Comment-only: non-Markdown paths ────────────────────────────────────
+
+  test('does NOT match tag in plain text file without comment marker', () => {
+    const result = scanner.parseLines('TODO: should not match in .txt', 'notes.txt');
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('matches tag preceded by double-slash comment in .js file', () => {
+    const result = scanner.parseLines('// TODO: js comment', 'app.js');
+    assert.strictEqual(result.length, 1);
+  });
 });
