@@ -48,9 +48,28 @@ This repo follows [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/
 
 ## Local setup
 
+**Prerequisites:** Node.js 20+ and VS Code 1.90+.
+
 ```sh
-npm install
-npm test              # run the test suite
-npm run coverage      # run tests with a coverage report
+npm install           # install all dependencies
+npm run compile       # one-shot build → out/ (required before F5 or tests)
+npm run watch         # incremental rebuild on every save (use during development)
+```
+
+To run the extension locally, open this repo in VS Code and press **F5** (or run *Run Extension* from the Run & Debug panel). This compiles the extension and opens an **Extension Development Host** window with the extension loaded.
+
+```sh
+npm run check-types   # TypeScript type check without emitting files
+npm run lint          # ESLint
+npm test              # compile + run the full Mocha suite inside a VS Code host
+npm run coverage      # same as test, with lcov/text/json-summary output
 npm run coverage:check # fails if line coverage is below the 80% threshold
 ```
+
+To produce a standalone `.vsix` package (e.g. to install manually via *Install from VSIX…* in VS Code):
+
+```sh
+npx vsce package      # runs type-check + lint + production build, then bundles → todo-beacon-x.y.z.vsix
+```
+
+The `.vsix` file appears in the project root. `npm run package` alone only runs the build step (esbuild → `dist/`) — it does **not** create the `.vsix`; that requires `vsce package`.
