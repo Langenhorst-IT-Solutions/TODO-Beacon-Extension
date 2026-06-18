@@ -307,6 +307,7 @@
     "test": "vscode-test",
     "precoverage": "npm run compile-tests && npm run compile",
     "coverage": "vscode-test --coverage --coverage-reporter text --coverage-reporter lcov --coverage-reporter json-summary --coverage-output coverage",
+    "coverage:check": "node scripts/check-coverage.js",
     "coverage:badge": "node scripts/coverage-badge.js",
     "prepare": "husky"
   },

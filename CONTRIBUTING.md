@@ -42,7 +42,7 @@ This repo follows [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/
 
 - **`main`** — stable, released code. Only the maintainer (repo owner) pushes to or merges into `main`, with or without a PR.
 - **`dev`** — integration branch for the next release. Anyone who isn't a maintainer must open a pull request against `dev`; direct pushes by non-maintainers are blocked by branch protection.
-- **Feature/fix branches** — branch off `dev`, open a PR back into `dev`. PRs need the `Lint & Test` status check to pass and a maintainer's approval before merging.
+- **Feature/fix branches** — branch off `dev`, open a PR back into `dev`. PRs need the `Lint & Test` status check to pass and a maintainer's approval before merging. `Lint & Test` includes a coverage check — line coverage must stay at or above **80%**, or the check fails.
 - **Release Candidates** — published from `dev` via the `Release RC` GitHub Actions workflow. This workflow is `workflow_dispatch`-only and is triggered exclusively by the maintainer.
 - **Stable releases** — published automatically by CI whenever the maintainer pushes/merges to `main`. Right after the release commit lands on `main`, CI merges it straight back into `dev` (no PR needed for this step — it only ever replays a commit that was already reviewed and released on `main`), so `dev` never drifts behind the latest release.
 
@@ -52,4 +52,5 @@ This repo follows [Git Flow](https://danielkummer.github.io/git-flow-cheatsheet/
 npm install
 npm test              # run the test suite
 npm run coverage      # run tests with a coverage report
+npm run coverage:check # fails if line coverage is below the 80% threshold
 ```
