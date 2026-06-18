@@ -44,3 +44,29 @@ jobs:
           # admin, which the ruleset's "Repository admin" bypass actor allows.
           GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Merge main back into dev
+        env:
+          RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
+        run: |
+          # No tag at HEAD means semantic-release didn't actually cut a
+          # release (e.g. only chore/docs commits since the last one) —
+          # nothing to back-merge.
+          if [ -z "$(git tag --points-at HEAD)" ]; then
+            echo "No release was made, skipping back-merge into dev."
+            exit 0
+          fi
+
+          RELEASE_SHA="$(git rev-parse HEAD)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          AUTH_REMOTE="https://x-access-token:${RELEASE_PAT}@github.com/${{ github.repository }}.git"
+          git fetch "$AUTH_REMOTE" dev
+          git checkout -B dev FETCH_HEAD
+          git merge --no-edit "$RELEASE_SHA"
+          # Pushed with the same admin-bypass PAT as the release commit
+          # above — this back-merge intentionally skips the PR requirement
+          # on dev, since it only ever replays a commit already reviewed
+          # and released on main.
+          git push "$AUTH_REMOTE" HEAD:dev
