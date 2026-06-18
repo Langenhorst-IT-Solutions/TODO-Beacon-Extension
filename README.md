@@ -95,6 +95,8 @@ npm test              # run the test suite
 npm run coverage      # run tests with a coverage report
 ```
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development workflow (compile, watch, running via F5, packaging a `.vsix`).
+
 ## Support TODO Beacon
 
 TODO Beacon is built and maintained by a single person in their spare time. If it's saving you the trouble of juggling two TODO tools, here's how a couple of minutes of your time helps a lot:

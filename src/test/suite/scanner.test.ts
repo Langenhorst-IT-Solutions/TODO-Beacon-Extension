@@ -82,6 +82,90 @@ suite('CodeScanner.parseLines', () => {
     assert.strictEqual(result[0].text, 'not a heading line');
   });
 
+  // ─── Markdown inline code spans ─────────────────────────────────────────
+
+  test('does NOT match a tag inside an inline code span in Markdown', () => {
+    const warnScanner = new CodeScanner(['TODO', 'FIXME', 'BUG', 'NOTE', 'WARN']);
+    const result = warnScanner.parseLines(
+      'use the `WARN:` tag to highlight warnings',
+      'README.md',
+    );
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('does NOT match a tag inside backtick span mid-sentence', () => {
+    const result = scanner.parseLines(
+      'a CSS rule like `.btn-note:hover` is never a `NOTE:` tag',
+      'docs.md',
+    );
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('still matches a real tag outside inline code spans in Markdown', () => {
+    const result = scanner.parseLines(
+      'TODO: fix this (see `example:` for details)',
+      'notes.md',
+    );
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].tag, 'TODO');
+  });
+
+  // ─── Markdown fenced code blocks ─────────────────────────────────────────
+
+  test('does NOT match a tag inside a fenced code block in Markdown', () => {
+    const content = [
+      'Some prose.',
+      '```',
+      '// TODO: this is example code',
+      '```',
+      'More prose.',
+    ].join('\n');
+    const result = scanner.parseLines(content, 'README.md');
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('does NOT match a tag inside a fenced block with language specifier', () => {
+    const content = [
+      '```typescript',
+      '// FIXME: example snippet',
+      '```',
+    ].join('\n');
+    const result = scanner.parseLines(content, 'guide.md');
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('does NOT match a tag inside a tilde-fenced code block', () => {
+    const content = ['~~~', '// BUG: in a tilde fence', '~~~'].join('\n');
+    const result = scanner.parseLines(content, 'page.md');
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('still matches a real tag after a closed fenced block', () => {
+    const content = [
+      '```',
+      '// TODO: inside fence — ignored',
+      '```',
+      'TODO: real tag after fence',
+    ].join('\n');
+    const result = scanner.parseLines(content, 'README.md');
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].tag, 'TODO');
+    assert.strictEqual(result[0].text, 'real tag after fence');
+  });
+
+  test('still matches a real tag before a fenced block', () => {
+    const content = [
+      'TODO: real tag before fence',
+      '```',
+      '// TODO: inside fence — ignored',
+      '```',
+    ].join('\n');
+    const result = scanner.parseLines(content, 'README.md');
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].tag, 'TODO');
+    assert.strictEqual(result[0].text, 'real tag before fence');
+  });
+
   // ─── Comment-only matching ───────────────────────────────────────────────
 
   test('does NOT match a tag word inside a CSS rule (no comment marker)', () => {
