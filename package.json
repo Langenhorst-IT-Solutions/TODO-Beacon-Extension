@@ -1,7 +1,7 @@
 {
   "name": "todo-beacon",
   "displayName": "TODO Beacon",
-  "description": "Bridges code TODO comments and a managed task list — one task, two faces.",
+  "description": "Track TODO/FIXME/BUG code comments and a Markdown or TaskPaper task list together in one Activity Bar view.",
   "version": "0.1.0",
   "private": true,
   "publisher": "Langenhorst-IT-Solutions",
@@ -32,22 +32,35 @@
   "keywords": [
     "todo",
     "fixme",
+    "bug",
     "task",
     "task list",
     "taskpaper",
     "markdown",
     "comments",
     "checklist",
-    "productivity"
+    "productivity",
+    "task management",
+    "tracker"
   ],
   "badges": [
     {
-      "url": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=dev",
+      "url": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=main",
       "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml",
-      "description": "CI status"
+      "description": "CI"
     },
     {
-      "url": "https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension",
+      "url": "https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/main/.github/badges/coverage.json",
+      "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml",
+      "description": "Coverage"
+    },
+    {
+      "url": "https://img.shields.io/github/v/release/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=version&color=blue",
+      "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/releases",
+      "description": "Version"
+    },
+    {
+      "url": "https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=license&color=green",
       "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/blob/main/LICENSE",
       "description": "License"
     }
@@ -304,6 +317,7 @@
     "test": "vscode-test",
     "precoverage": "npm run compile-tests && npm run compile",
     "coverage": "vscode-test --coverage --coverage-reporter text --coverage-reporter lcov --coverage-reporter json-summary --coverage-output coverage",
+    "coverage:check": "node scripts/check-coverage.js",
     "coverage:badge": "node scripts/coverage-badge.js",
     "prepare": "husky"
   },

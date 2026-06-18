@@ -96,9 +96,9 @@ running · 00:12:34   |  Pause   |  Done   |  Cancel
 
 Start / Pause / Resume drive time tracking (timer also shown in the status bar, like Todo+). Archive moves the task into the list's archive section without losing data (Trust Rule).
 
-## Planned: tag colors
+## Tag colors (shipped in v0.1.0)
 
-Recognized tags should be color-highlighted in the editor (keyword and/or whole line) and grouped with an icon and color in the tree view. All tags, colors, icons, and the underlying regex should stay user-configurable — the table below is the shipped default. The icon column names matching built-in VS Code codicons (`$(name)`).
+Recognized tags are color-highlighted in the editor (the tag keyword itself, bold) and grouped with a matching icon and color in the tree view (`src/tagStyles.ts`, `src/decorations/TagHighlighter.ts`). The table below is the shipped default; colors are defined as `ThemeColor` (`contributes.colors` in `package.json`) so they adapt to light/dark themes, and every tag is always paired with an icon, never color alone. The icon column names match built-in VS Code codicons (`$(name)`).
 
 | Tag                 | Meaning                | Color                  | Icon (codicon)   |
 | -------------------- | ----------------------- | ----------------------- | ----------------- |
@@ -116,7 +116,7 @@ Recognized tags should be color-highlighted in the editor (keyword and/or whole 
 | `DEPRECATED`          | outdated                   | gray (strikethrough)     | `archive`          |
 | `XXX`                 | critical marker             | red                      | `error`            |
 
-Two marking layers would work together: the **type color** (TODO vs. FIXME vs. BUG, …) and a **status overlay** over the lifecycle — "Done" struck through and dimmed, "Cancelled" dimmed, "Running" gets a gutter accent. Colors should be defined as `ThemeColor` so they adapt to light/dark themes, and always paired with an icon (never color alone, for accessibility).
+Still planned: a second marking layer for the lifecycle once status tracking exists (Phase 3) — a **status overlay** on top of the type color, e.g. "Done" struck through and dimmed, "Cancelled" dimmed, "Running" with a gutter accent — plus user-facing settings to turn editor highlighting on/off or restrict it to the keyword vs. the whole line (`todo-beacon.decorations.enabled`, `todo-beacon.decorations.target`). Today, editor highlighting is always on and not configurable.
 
 ## Planned: grouping & views
 
@@ -184,6 +184,14 @@ The initial scan runs as `findFiles` plus batched reads with a progress indicato
 - [x] Task List click-to-navigate.
 - [x] Auto-refresh via file watcher, manual refresh command.
 - [x] Stable ID extraction from `(#xxxx)` markers (read-only so far — see Phase 2 for injection).
+- [x] Per-tag colors and icons, shown in both tree views and as bold keyword highlighting in the editor (see "Tag colors" above).
+- [x] Published on the VS Code Marketplace.
+
+### Known limitations
+
+- TaskPaper task files don't support nested projects yet — every line ending in `:` becomes a flat top-level project, unlike Markdown's heading-depth nesting ([#4](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/issues/4)).
+- The scanner only detects the first tag on a line — a line with two tags only reports one ([#6](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/issues/6)).
+- In Markdown files, the scanner skips heading lines but not inline code spans or fenced code blocks — a tag mentioned only as a documentation example inside backticks (e.g. this README's own CSS-rule example) is still reported as a real tag ([#7](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/issues/7)).
 
 ### Phase 1 — One-way sync & index
 
@@ -201,7 +209,7 @@ The initial scan runs as `findFiles` plus batched reads with a progress indicato
 
 - [ ] Time tracking: Start / Pause / Resume / Done / Cancel / Archive / Reopen, with a status bar timer (`todo-beacon.timeTracking.enabled`, `todo-beacon.statusBar.enabled`).
 - [ ] Scheduling tags (`@today` / `@thisweek`) and a dedicated **Focus view**.
-- [ ] Editor decorations: per-tag colors and status overlays (`todo-beacon.decorations.enabled`, `todo-beacon.decorations.target`, `todoBeacon.*Foreground` theme colors).
+- [ ] Status overlays on top of the existing per-tag editor/tree colors (Done struck through, Cancelled dimmed, Running gutter accent), plus `todo-beacon.decorations.enabled` / `todo-beacon.decorations.target` settings to make today's always-on highlighting configurable.
 - [ ] CodeLens hint line with lifecycle actions above each tag (`todo-beacon.codeLens.enabled`).
 - [ ] Grouping switcher: by type / file / status / schedule / project (`todo-beacon.grouping`, `todo-beacon.changeGrouping` command).
 
@@ -210,6 +218,5 @@ The initial scan runs as `findFiles` plus batched reads with a progress indicato
 - [ ] Optional fast scanner provider using VS Code's bundled ripgrep, with silent fallback (`todo-beacon.scanner.provider`).
 - [ ] Multi-root/monorepo performance tuning.
 - [ ] Conflict UI for ambiguous fuzzy-matches.
-- [ ] Marketplace publishing.
 
 The riskiest part is Phase 1/2 (identity plus write-back) — best validated early with a thin vertical slice before investing in the rich features of Phase 3.

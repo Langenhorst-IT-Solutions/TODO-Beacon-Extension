@@ -35,6 +35,9 @@ jobs:
         env:
           HUSKY: 0
 
+      - name: Enforce coverage threshold
+        run: npm run coverage:check
+
       - name: Update coverage badge
         if: github.event_name == 'push'
         env:

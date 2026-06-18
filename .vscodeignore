@@ -13,7 +13,7 @@ src/
 # Config & tooling
 .eslintrc.json
 .gitignore
-.releaserc.json
+.releaserc.cjs
 .vscode-test.mjs
 commitlint.config.cjs
 commitlint.config.js
@@ -23,6 +23,9 @@ tsconfig.test.json
 
 # Docs / planning
 CONCEPT.md
+
+# Marketing/screenshot assets — not needed at runtime
+marketing-assets/
 
 # Design sources / references (not needed at runtime)
 resources/todo-beacon-icon-source.svg

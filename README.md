@@ -4,19 +4,26 @@
 
 # TODO Beacon
 
-**Bridges code TODO comments and a managed task list — one task, two faces.**
+**See your code's TODO/FIXME/BUG comments and your Markdown or TaskPaper task list in one Activity Bar view.**
 
-[![CI](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/dev/.github/badges/coverage.json)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
-[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/Langenhorst-IT-Solutions.todo-beacon?label=marketplace)](https://marketplace.visualstudio.com/items?itemName=Langenhorst-IT-Solutions.todo-beacon)
-[![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Langenhorst-IT-Solutions.todo-beacon)](https://marketplace.visualstudio.com/items?itemName=Langenhorst-IT-Solutions.todo-beacon)
-[![License: MIT](https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension)](LICENSE)
+[![CI](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/main/.github/badges/coverage.json)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/github/v/release/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=version&color=blue)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/releases)
+[![License](https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=license&color=green)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/blob/main/LICENSE)
 
 </div>
 
 ---
 
-TODO Beacon scans your codebase for `TODO`/`FIXME`/`BUG`-style comments **and** parses a plain-text task file, then shows both side by side in the Activity Bar — so you never have to choose between "TODOs live in code" and "tasks live in a list."
+Most TODO trackers only scan comments in your code. Most task list tools only manage a separate file. TODO Beacon does both at once: it scans your codebase for `TODO`/`FIXME`/`BUG`-style comments **and** parses a Markdown or TaskPaper task file, then shows both as trees side by side in the Activity Bar. Click any item to jump straight to that line — no copy-pasting tasks between your code and your to-do list.
+
+## Up and running in 10 seconds
+
+No configuration required — just install and open the sidebar.
+
+1. Install the extension.
+2. Click the **TODO Beacon** icon in the Activity Bar (the bar on the far left/right edge of VS Code).
+3. Done — your code's `TODO`/`FIXME`/`BUG` comments and your task file (auto-detected, see below) show up right away.
 
 ## Features
 
@@ -80,13 +87,21 @@ VS Code `1.90.0` or newer.
 
 ## Contributing
 
-Issues and pull requests are welcome at [github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension). Planned features and design decisions are tracked in [ROADMAP.md](ROADMAP.md).
+Issues and pull requests are welcome at [github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension). Planned features and design decisions are tracked in [ROADMAP.md](ROADMAP.md). See [CONTRIBUTING.md](CONTRIBUTING.md) for commit conventions and the branching model.
 
 ```sh
 npm install
 npm test              # run the test suite
 npm run coverage      # run tests with a coverage report
 ```
+
+## Support TODO Beacon
+
+TODO Beacon is built and maintained by a single person in their spare time. If it's saving you the trouble of juggling two TODO tools, here's how a couple of minutes of your time helps a lot:
+
+- ⭐ [Star the repo on GitHub](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension) — makes it easier for others to discover.
+- 📝 [Leave a review on the Marketplace](https://marketplace.visualstudio.com/items?itemName=Langenhorst-IT-Solutions.todo-beacon&ssr=false#review-details) — even a short one helps a lot at this stage.
+- 🐛 [Open an issue](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/issues) — bug reports and feature requests both genuinely shape what gets built next.
 
 ## License
 
