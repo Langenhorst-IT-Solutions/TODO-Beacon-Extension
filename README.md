@@ -6,8 +6,10 @@
 
 **See your code's TODO/FIXME/BUG comments and your Markdown or TaskPaper task list in one Activity Bar view.**
 
-[![Version](https://img.shields.io/github/v/release/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=version)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/releases)
-[![License: MIT](https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=license)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/blob/main/LICENSE)
+[![CI](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/main/.github/badges/coverage.json)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/github/v/release/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=version&color=blue)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/releases)
+[![License](https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=license&color=green)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/blob/main/LICENSE)
 
 </div>
 
@@ -84,11 +86,6 @@ Personal:
 VS Code `1.90.0` or newer.
 
 ## Contributing
-
-[![CI](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/main/.github/badges/coverage.json)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/github/v/release/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=version)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/releases)
-[![License: MIT](https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=license)](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/blob/main/LICENSE)
 
 Issues and pull requests are welcome at [github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension](https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension). Planned features and design decisions are tracked in [ROADMAP.md](ROADMAP.md). See [CONTRIBUTING.md](CONTRIBUTING.md) for commit conventions and the branching model.
 

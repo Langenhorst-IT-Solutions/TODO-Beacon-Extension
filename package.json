@@ -45,12 +45,22 @@
   ],
   "badges": [
     {
-      "url": "https://img.shields.io/github/v/release/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=version",
+      "url": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml/badge.svg?branch=main",
+      "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml",
+      "description": "CI"
+    },
+    {
+      "url": "https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/main/.github/badges/coverage.json",
+      "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/actions/workflows/ci.yml",
+      "description": "Coverage"
+    },
+    {
+      "url": "https://img.shields.io/github/v/release/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=version&color=blue",
       "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/releases",
       "description": "Version"
     },
     {
-      "url": "https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=license",
+      "url": "https://img.shields.io/github/license/Langenhorst-IT-Solutions/TODO-Beacon-Extension?label=license&color=green",
       "href": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension/blob/main/LICENSE",
       "description": "License"
     }
