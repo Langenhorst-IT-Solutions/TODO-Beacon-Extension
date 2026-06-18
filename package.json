@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Langenhorst-IT-Solutions/TODO-Beacon-Extension#readme",
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.125.0"
   },
   "categories": [
     "Other"
