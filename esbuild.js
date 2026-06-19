@@ -25,8 +25,8 @@ async function main() {
         {
           name: 'watch-logger',
           setup(build) {
-            build.onStart(() => process.stdout.write('[watch] build started\n'));
-            build.onEnd(() => process.stdout.write('[watch] build finished\n'));
+            build.onStart(() => { process.stdout.write('[watch] build started\n'); });
+            build.onEnd(() => { process.stdout.write('[watch] build finished\n'); });
           },
         },
       ],
