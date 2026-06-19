@@ -336,6 +336,16 @@
           "type": "number",
           "default": 1024,
           "description": "Maximum file size in KB to scan. Larger files are skipped."
+        },
+        "todo-beacon.autoAddToInbox": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically mirror newly discovered code TODOs into the inbox section of the task file. Requires a task file to be present. Existing items are never duplicated."
+        },
+        "todo-beacon.sync.inboxHeading": {
+          "type": "string",
+          "default": "Inbox",
+          "description": "Heading name used for the inbox section in the task file (e.g. 'Inbox', 'New', 'Triage'). In Markdown files this becomes a level-2 heading; in TaskPaper files a project name."
         }
       }
     }

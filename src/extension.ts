@@ -5,6 +5,8 @@ import { MarkdownTaskParser } from './parser/MarkdownTaskParser';
 import { CodeTodoTreeProvider, TaskListTreeProvider } from './tree/TodoTreeProvider';
 import { TagHighlighter } from './decorations/TagHighlighter';
 import { LocalConfigLoader, LocalConfigEntry } from './config/LocalConfigLoader';
+import { SidecarIndex } from './index/SidecarIndex';
+import { ReconcileEngine } from './sync/ReconcileEngine';
 import { OpenTarget, Project } from './types';
 
 const TASK_FILE_CANDIDATES = ['tasks.todo', 'TODO.md', 'todo.md', 'TASKS.md', 'tasks.md'];
@@ -21,6 +23,11 @@ export function activate(context: vscode.ExtensionContext): void {
   const codeProvider = new CodeTodoTreeProvider();
   const listProvider = new TaskListTreeProvider();
   const highlighter = new TagHighlighter(scanner);
+
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  const sidecarIndex = workspaceFolder ? new SidecarIndex(workspaceFolder) : null;
+  const reconcileEngine = sidecarIndex ? new ReconcileEngine(sidecarIndex) : null;
+  void sidecarIndex?.load();
 
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider('todo-beacon.codeView', codeProvider),
@@ -105,6 +112,16 @@ export function activate(context: vscode.ExtensionContext): void {
     ]);
     codeProvider.update(todos);
     updateVisibleHighlights();
+
+    if (reconcileEngine) {
+      const syncConfig = vscode.workspace.getConfiguration('todo-beacon');
+      void reconcileEngine.reconcile(todos, {
+        autoAddToInbox: syncConfig.get<boolean>('autoAddToInbox') ?? false,
+        inboxHeading: syncConfig.get<string>('sync.inboxHeading') ?? 'Inbox',
+        taskFileUri: taskFile?.uri ?? null,
+        taskFileRelPath: taskFile?.relativePath ?? null,
+      });
+    }
   }
 
   async function refreshTaskList(
