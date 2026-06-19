@@ -1,3 +1,9 @@
 {
-  "exclude": ["marketing-assets/**"]
+  "exclude": [
+    "marketing-assets/**",
+    "src/test/**",
+    "**/*.md",
+    ".github/**",
+    "scripts/**"
+  ]
 }
