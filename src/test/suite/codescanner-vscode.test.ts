@@ -61,4 +61,16 @@ suite('CodeScanner — VS Code API integration', () => {
     const result = await tinyScanner.scanFile(uri);
     assert.deepStrictEqual(result, []);
   });
+
+  // ─── scan() with getDirective ─────────────────────────────────────────────
+
+  test('scan() with always-skip directive returns empty array', async () => {
+    const result = await scanner.scan([], () => ({ skip: true }));
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('scan() with no directive returns results normally', async () => {
+    const result = await scanner.scan(['**/*']);
+    assert.ok(Array.isArray(result));
+  });
 });

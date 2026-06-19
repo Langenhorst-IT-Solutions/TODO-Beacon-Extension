@@ -95,12 +95,12 @@ export function activate(context: vscode.ExtensionContext): void {
       ? [...excludePatterns, taskFile.relativePath]
       : excludePatterns;
 
-    const fileFilter = localConfigEntries.length > 0
-      ? (relPath: string) => !LocalConfigLoader.isExcluded(relPath, localConfigEntries)
+    const getDirective = localConfigEntries.length > 0
+      ? (relPath: string) => LocalConfigLoader.getDirective(relPath, localConfigEntries)
       : undefined;
 
     const [todos] = await Promise.all([
-      scanner.scan(scanExcludes, fileFilter),
+      scanner.scan(scanExcludes, getDirective),
       refreshTaskList(taskFile),
     ]);
     codeProvider.update(todos);

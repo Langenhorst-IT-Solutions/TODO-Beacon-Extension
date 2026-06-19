@@ -1,7 +1,6 @@
 {
   "exclude": [
     "marketing-assets/**",
-    "src/test/**",
     "**/*.md",
     ".github/**",
     "scripts/**"

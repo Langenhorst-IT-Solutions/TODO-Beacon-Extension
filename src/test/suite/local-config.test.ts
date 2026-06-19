@@ -165,3 +165,49 @@ suite('LocalConfigLoader.isExcluded', () => {
     assert.ok(LocalConfigLoader.isExcluded('marketing-assets\\sample.ts', entries));
   });
 });
+
+// ─── LocalConfigLoader.getDirective ──────────────────────────────────────────
+
+suite('LocalConfigLoader.getDirective', () => {
+  const entries: LocalConfigEntry[] = [
+    { dirRelPath: '', config: { exclude: ['marketing-assets/**'] } },
+    { dirRelPath: 'src/test', config: { maskStringLiterals: true } },
+  ];
+
+  test('returns skip=true for excluded file', () => {
+    const d = LocalConfigLoader.getDirective('marketing-assets/sample.ts', entries);
+    assert.strictEqual(d.skip, true);
+  });
+
+  test('returns skip=false for non-excluded file', () => {
+    const d = LocalConfigLoader.getDirective('src/extension.ts', entries);
+    assert.strictEqual(d.skip, false);
+  });
+
+  test('returns maskStringLiterals from subdirectory config', () => {
+    const d = LocalConfigLoader.getDirective('src/test/suite/scanner.test.ts', entries);
+    assert.strictEqual(d.maskStringLiterals, true);
+    assert.strictEqual(d.skip, false);
+  });
+
+  test('maskStringLiterals is undefined for files outside the sub-config directory', () => {
+    const d = LocalConfigLoader.getDirective('src/extension.ts', entries);
+    assert.strictEqual(d.maskStringLiterals, undefined);
+  });
+
+  test('returns skip=false and no options when no entries', () => {
+    const d = LocalConfigLoader.getDirective('any/file.ts', []);
+    assert.strictEqual(d.skip, false);
+    assert.strictEqual(d.maskStringLiterals, undefined);
+  });
+
+  test('skip and maskStringLiterals can both be set when configs combine', () => {
+    const combined: LocalConfigEntry[] = [
+      { dirRelPath: '', config: { exclude: ['dist/**'], maskStringLiterals: false } },
+      { dirRelPath: 'dist/test', config: { maskStringLiterals: true } },
+    ];
+    const d = LocalConfigLoader.getDirective('dist/test/foo.js', combined);
+    assert.strictEqual(d.skip, true);
+    assert.strictEqual(d.maskStringLiterals, true);
+  });
+});

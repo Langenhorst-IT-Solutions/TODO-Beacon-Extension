@@ -4,6 +4,8 @@ import * as path from 'path';
 export interface LocalConfig {
   exclude?: string[];
   tags?: string[];
+  /** When true, TODO tags inside string literals ('', "", ``) are ignored. */
+  maskStringLiterals?: boolean;
 }
 
 export interface LocalConfigEntry {
@@ -70,6 +72,20 @@ export class LocalConfigLoader {
     const excludes = effective.exclude ?? [];
     const normalized = toForwardSlashes(fileRelPath);
     return excludes.some(pattern => matchesGlob(pattern, normalized));
+  }
+
+  /**
+   * Returns a combined directive for a file: whether to skip it entirely
+   * and which scan-time options to apply.
+   */
+  static getDirective(
+    fileRelPath: string,
+    entries: LocalConfigEntry[],
+  ): { skip: boolean; maskStringLiterals?: boolean } {
+    const effective = this.resolve(fileRelPath, entries);
+    const normalized = toForwardSlashes(fileRelPath);
+    const skip = (effective.exclude ?? []).some(p => matchesGlob(p, normalized));
+    return { skip, maskStringLiterals: effective.maskStringLiterals };
   }
 }
 
