@@ -7,6 +7,8 @@ import { TagHighlighter } from './decorations/TagHighlighter';
 import { LocalConfigLoader, LocalConfigEntry } from './config/LocalConfigLoader';
 import { SidecarIndex } from './index/SidecarIndex';
 import { ReconcileEngine } from './sync/ReconcileEngine';
+import { IdInjector } from './sync/IdInjector';
+import { WriteBackEngine } from './sync/WriteBackEngine';
 import { OpenTarget, Project } from './types';
 
 const TASK_FILE_CANDIDATES = ['tasks.todo', 'TODO.md', 'todo.md', 'TASKS.md', 'tasks.md'];
@@ -118,6 +120,8 @@ export function activate(context: vscode.ExtensionContext): void {
       void reconcileEngine.reconcile(todos, {
         autoAddToInbox: syncConfig.get<boolean>('autoAddToInbox') ?? false,
         inboxHeading: syncConfig.get<string>('sync.inboxHeading') ?? 'Inbox',
+        archiveOrphans: syncConfig.get<boolean>('sync.archiveOrphans') ?? false,
+        orphanHeading: syncConfig.get<string>('sync.orphanHeading') ?? 'Orphaned',
         taskFileUri: taskFile?.uri ?? null,
         taskFileRelPath: taskFile?.relativePath ?? null,
       });
@@ -158,6 +162,120 @@ export function activate(context: vscode.ExtensionContext): void {
         selection: new vscode.Range(target.line, target.column, target.line, target.column),
         preserveFocus: false,
       });
+    }),
+
+    vscode.commands.registerCommand('todo-beacon.promote', async () => {
+      const promoteConfig = vscode.workspace.getConfiguration('todo-beacon');
+      if (!promoteConfig.get<boolean>('idInjection')) {
+        void vscode.window.showWarningMessage(
+          'TODO Beacon: Enable "todo-beacon.idInjection" in settings to use Promote.',
+        );
+        return;
+      }
+
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) return;
+
+      const line = editor.selection.active.line;
+      const relPath = vscode.workspace.asRelativePath(editor.document.uri);
+      const todos = scanner.parseLines(editor.document.getText(), relPath);
+      const todo = todos.find(t => t.line === line);
+
+      if (!todo) {
+        void vscode.window.showInformationMessage(
+          'TODO Beacon: No TODO tag found on the current line.',
+        );
+        return;
+      }
+
+      if (todo.id) {
+        void vscode.window.showInformationMessage(
+          `TODO Beacon: Already promoted — ID #${todo.id}.`,
+        );
+        return;
+      }
+
+      const template = promoteConfig.get<string>('idTemplate') ?? '(#{{id}})';
+      const injector = new IdInjector(template);
+      const codeId = await injector.inject(editor.document.uri, line);
+
+      if (codeId && sidecarIndex) {
+        const existing = sidecarIndex.findByTextAndFile(todo.text, relPath);
+        const base = existing ?? {
+          id: SidecarIndex.syntheticId(todo.text, relPath),
+          tag: todo.tag,
+          text: todo.text,
+          file: relPath,
+          line: todo.line,
+          textHash: SidecarIndex.textHash(todo.text),
+          codeId: null,
+        };
+        sidecarIndex.addOrUpdate({ ...base, codeId });
+        await sidecarIndex.save();
+        void vscode.window.showInformationMessage(
+          `TODO Beacon: Promoted — #${codeId} injected.`,
+        );
+      }
+    }),
+
+    vscode.commands.registerCommand('todo-beacon.applyWriteBacks', async () => {
+      if (!sidecarIndex || !workspaceFolder) {
+        void vscode.window.showWarningMessage('TODO Beacon: No workspace folder open.');
+        return;
+      }
+
+      const taskFile = await resolveTaskFile();
+      if (!taskFile) {
+        void vscode.window.showWarningMessage('TODO Beacon: No task file found.');
+        return;
+      }
+
+      const wbConfig = vscode.workspace.getConfiguration('todo-beacon');
+      const engine = new WriteBackEngine(
+        sidecarIndex,
+        wbConfig.get<string>('writeBack.doneKeyword') ?? 'DONE',
+        wbConfig.get<string>('writeBack.cancelKeyword') ?? 'CANCELLED',
+        wbConfig.get<boolean>('writeBack.onDone') ?? false,
+        wbConfig.get<boolean>('writeBack.onCancel') ?? false,
+      );
+
+      let content: string;
+      try {
+        const bytes = await vscode.workspace.fs.readFile(taskFile.uri);
+        content = new TextDecoder().decode(bytes);
+      } catch {
+        void vscode.window.showWarningMessage('TODO Beacon: Could not read task file.');
+        return;
+      }
+
+      const projects = parseTaskFile(content, taskFile.relativePath);
+      const changes = engine.buildChanges(projects, workspaceFolder);
+
+      if (changes.length === 0) {
+        void vscode.window.showInformationMessage('TODO Beacon: No write-backs pending.');
+        return;
+      }
+
+      const items = changes.map(c => ({
+        label: `$(arrow-right) ${c.file}:${c.line + 1}`,
+        description: `${c.originalTag} → ${c.newTag}: ${c.text}`,
+        picked: true,
+        change: c,
+      }));
+
+      const selected = await vscode.window.showQuickPick(items, {
+        canPickMany: true,
+        placeHolder: `Apply ${changes.length} write-back${changes.length === 1 ? '' : 's'} to code?`,
+      });
+
+      if (!selected || selected.length === 0) return;
+
+      await engine.applyChanges(selected.map(s => s.change));
+      await sidecarIndex.save();
+      void vscode.window.showInformationMessage(
+        `TODO Beacon: Applied ${selected.length} write-back${selected.length === 1 ? '' : 's'}.`,
+      );
+      void refresh();
     }),
   );
 

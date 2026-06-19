@@ -103,6 +103,16 @@
         "title": "Refresh TODOs",
         "icon": "$(refresh)",
         "category": "TODO Beacon"
+      },
+      {
+        "command": "todo-beacon.promote",
+        "title": "Promote TODO (inject stable ID)",
+        "category": "TODO Beacon"
+      },
+      {
+        "command": "todo-beacon.applyWriteBacks",
+        "title": "Apply Write-backs to Code",
+        "category": "TODO Beacon"
       }
     ],
     "menus": {
@@ -111,6 +121,13 @@
           "command": "todo-beacon.refresh",
           "when": "view == todo-beacon.codeView || view == todo-beacon.listView",
           "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "todo-beacon.promote",
+          "when": "editorTextFocus",
+          "group": "todoBeacon@1"
         }
       ]
     },
@@ -346,6 +363,46 @@
           "type": "string",
           "default": "Inbox",
           "description": "Heading name used for the inbox section in the task file (e.g. 'Inbox', 'New', 'Triage'). In Markdown files this becomes a level-2 heading; in TaskPaper files a project name."
+        },
+        "todo-beacon.sync.archiveOrphans": {
+          "type": "boolean",
+          "default": false,
+          "description": "When a code TODO disappears from the codebase, move it to the orphan section of the task file instead of silently dropping it (Trust Rule). Requires a task file to be present."
+        },
+        "todo-beacon.sync.orphanHeading": {
+          "type": "string",
+          "default": "Orphaned",
+          "description": "Heading name used for the orphan section in the task file. In Markdown files this becomes a level-2 heading; in TaskPaper files a project name."
+        },
+        "todo-beacon.idInjection": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the 'Promote TODO' command, which injects a stable short ID (e.g. (#7f3a)) into the code comment. Required for reliable status write-back."
+        },
+        "todo-beacon.idTemplate": {
+          "type": "string",
+          "default": "(#{{id}})",
+          "description": "Template for the injected ID marker. Use {{id}} as the placeholder for the generated hex ID."
+        },
+        "todo-beacon.writeBack.onDone": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include done tasks when running 'Apply Write-backs to Code'. Replaces the original tag keyword with todo-beacon.writeBack.doneKeyword in the code comment."
+        },
+        "todo-beacon.writeBack.onCancel": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include cancelled tasks when running 'Apply Write-backs to Code'. Replaces the original tag keyword with todo-beacon.writeBack.cancelKeyword in the code comment."
+        },
+        "todo-beacon.writeBack.doneKeyword": {
+          "type": "string",
+          "default": "DONE",
+          "description": "Keyword to write into the code comment when a managed task is marked done (e.g. TODO → DONE)."
+        },
+        "todo-beacon.writeBack.cancelKeyword": {
+          "type": "string",
+          "default": "CANCELLED",
+          "description": "Keyword to write into the code comment when a managed task is cancelled (e.g. TODO → CANCELLED)."
         }
       }
     }

@@ -26,6 +26,8 @@ function todo(overrides: Partial<TodoComment> = {}): TodoComment {
 const NO_INBOX = {
   autoAddToInbox: false,
   inboxHeading: 'Inbox',
+  archiveOrphans: false,
+  orphanHeading: 'Orphaned',
   taskFileUri: null,
   taskFileRelPath: null,
 };
@@ -75,6 +77,8 @@ suite('ReconcileEngine — inbox writing', () => {
     await engine.reconcile([todo()], {
       autoAddToInbox: true,
       inboxHeading: 'Inbox',
+      archiveOrphans: false,
+      orphanHeading: 'Orphaned',
       taskFileUri: taskUri,
       taskFileRelPath: 'tasks.md',
     });
@@ -98,5 +102,39 @@ suite('ReconcileEngine — inbox writing', () => {
       exists = true;
     } catch { /* file not created → correct */ }
     assert.strictEqual(exists, false, 'task file should not have been created');
+  });
+});
+
+suite('ReconcileEngine — orphan handling', () => {
+  test('index entry not matched by current scan is detected as orphan', async () => {
+    const taskUri = vscode.Uri.file(path.join(os.tmpdir(), `rengine-orphan-${Date.now()}.md`));
+    const idx = makeIndex();
+    // Pre-seed index with a TODO that is NOT in the current scan results.
+    idx.addOrUpdate({ id: 'gone1', tag: 'TODO', text: 'deleted todo', file: 'src/a.ts', line: 1, textHash: '', codeId: null });
+    const engine = new ReconcileEngine(idx);
+    idx.save = async () => {};
+
+    await engine.reconcile([], {
+      ...NO_INBOX,
+      archiveOrphans: true,
+      taskFileUri: taskUri,
+      taskFileRelPath: 'tasks.md',
+    });
+
+    const content = new TextDecoder().decode(await vscode.workspace.fs.readFile(taskUri));
+    assert.ok(content.includes('deleted todo'), 'orphaned TODO should appear in task file');
+    assert.ok(content.includes('## Orphaned'));
+    assert.strictEqual(idx.size(), 0, 'orphaned entry should be removed from index');
+  });
+
+  test('archiveOrphans:false leaves orphaned entries in the index', async () => {
+    const idx = makeIndex();
+    idx.addOrUpdate({ id: 'keep1', tag: 'TODO', text: 'still here', file: 'src/b.ts', line: 0, textHash: '', codeId: null });
+    const engine = new ReconcileEngine(idx);
+    idx.save = async () => {};
+
+    await engine.reconcile([], NO_INBOX);
+
+    assert.strictEqual(idx.size(), 1, 'entry should remain when archiveOrphans is false');
   });
 });
