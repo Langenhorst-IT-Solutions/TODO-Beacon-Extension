@@ -1,0 +1,8 @@
+{
+  "exclude": [
+    "marketing-assets/**",
+    "**/*.md",
+    ".github/**",
+    "scripts/**"
+  ]
+}

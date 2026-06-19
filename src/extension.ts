@@ -4,6 +4,7 @@ import { TaskPaperParser } from './parser/TaskPaperParser';
 import { MarkdownTaskParser } from './parser/MarkdownTaskParser';
 import { CodeTodoTreeProvider, TaskListTreeProvider } from './tree/TodoTreeProvider';
 import { TagHighlighter } from './decorations/TagHighlighter';
+import { LocalConfigLoader, LocalConfigEntry } from './config/LocalConfigLoader';
 import { OpenTarget, Project } from './types';
 
 const TASK_FILE_CANDIDATES = ['tasks.todo', 'TODO.md', 'todo.md', 'TASKS.md', 'tasks.md'];
@@ -45,6 +46,8 @@ export function activate(context: vscode.ExtensionContext): void {
   // Empty string → auto-detect; any other value → use exactly that path.
   const configuredTaskFile = config.get<string>('taskFile') || undefined;
 
+  let localConfigEntries: LocalConfigEntry[] = [];
+
   async function resolveTaskFile(): Promise<{ uri: vscode.Uri; relativePath: string } | null> {
     const folder = vscode.workspace.workspaceFolders?.[0];
     if (!folder) return null;
@@ -81,7 +84,10 @@ export function activate(context: vscode.ExtensionContext): void {
   }
 
   async function refresh(): Promise<void> {
-    const taskFile = await resolveTaskFile();
+    const [taskFile] = await Promise.all([
+      resolveTaskFile(),
+      LocalConfigLoader.loadAll().then(entries => { localConfigEntries = entries; }),
+    ]);
 
     // Exclude the task file from the code scanner so its content doesn't
     // appear under "Code TODOs" — it belongs in the "Task List" view only.
@@ -89,8 +95,12 @@ export function activate(context: vscode.ExtensionContext): void {
       ? [...excludePatterns, taskFile.relativePath]
       : excludePatterns;
 
+    const getDirective = localConfigEntries.length > 0
+      ? (relPath: string) => LocalConfigLoader.getDirective(relPath, localConfigEntries)
+      : undefined;
+
     const [todos] = await Promise.all([
-      scanner.scan(scanExcludes),
+      scanner.scan(scanExcludes, getDirective),
       refreshTaskList(taskFile),
     ]);
     codeProvider.update(todos);

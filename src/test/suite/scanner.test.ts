@@ -297,4 +297,55 @@ suite('CodeScanner.parseLines', () => {
     const result = scanner.parseLines('// TODO: js comment', 'app.js');
     assert.strictEqual(result.length, 1);
   });
+
+  // ─── maskStringLiterals option ───────────────────────────────────────────
+
+  test('without maskStringLiterals, TODO inside single-quoted string IS picked up', () => {
+    const result = scanner.parseLines("scanner.run('// TODO: fixture')", 'f.ts');
+    assert.strictEqual(result.length, 1);
+  });
+
+  test('maskStringLiterals: suppresses TODO inside single-quoted string', () => {
+    const result = scanner.parseLines("scanner.run('// TODO: fixture')", 'f.ts', { maskStringLiterals: true });
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('maskStringLiterals: suppresses TODO inside double-quoted string', () => {
+    const result = scanner.parseLines('scanner.run("// TODO: fixture")', 'f.ts', { maskStringLiterals: true });
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('maskStringLiterals: suppresses TODO inside template literal', () => {
+    const result = scanner.parseLines('scanner.run(`// TODO: fixture`)', 'f.ts', { maskStringLiterals: true });
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('maskStringLiterals: real comment TODO is still found', () => {
+    const result = scanner.parseLines("const x = 'noise'; // TODO: real task", 'f.ts', { maskStringLiterals: true });
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].text, 'real task');
+  });
+
+  test('maskStringLiterals: finds real comment when string precedes it', () => {
+    const result = scanner.parseLines("fn('// TODO: fake'); // TODO: real", 'f.ts', { maskStringLiterals: true });
+    assert.strictEqual(result.length, 1);
+    assert.strictEqual(result[0].text, 'real');
+  });
+
+  test('maskStringLiterals: handles escaped quote inside string', () => {
+    const result = scanner.parseLines("const x = 'it\\'s // TODO: fake';", 'f.ts', { maskStringLiterals: true });
+    assert.deepStrictEqual(result, []);
+  });
+
+  test('maskStringLiterals: does not affect Markdown files (inline code mask is used instead)', () => {
+    // In Markdown the maskStringLiterals option is ignored — the markdown path uses maskInlineCode
+    const result = scanner.parseLines("TODO: real prose tag", 'f.md', { maskStringLiterals: true });
+    assert.strictEqual(result.length, 1);
+  });
+
+  test('maskStringLiterals: standalone // in string does not fake a comment marker', () => {
+    // Without real comment syntax the tag should not be found even if // is in a string
+    const result = scanner.parseLines("const x = '//'; TODO: not in comment", 'f.ts', { maskStringLiterals: true });
+    assert.deepStrictEqual(result, []);
+  });
 });
