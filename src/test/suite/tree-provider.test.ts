@@ -213,6 +213,33 @@ suite('TaskListTreeProvider', () => {
     assert.deepStrictEqual(item.command?.arguments, [{ file: 'TODO.md', line: 5, column: 0 }]);
   });
 
+  test('a task with a (#xxxx) id opens its mapped code location instead of the task file', () => {
+    const provider = new TaskListTreeProvider();
+    const idTask: Task = {
+      id: '7f3a', text: 'do thing', status: 'open', tags: {}, lineNumber: 5, file: 'TODO.md',
+    };
+    const root: Project = { name: 'Work', tasks: [idTask], lineNumber: 0, level: 1, children: [] };
+    const targets = new Map([['7f3a', { file: 'src/cart.js', line: 17, column: 0 }]]);
+    provider.update([root], targets);
+
+    const [projectItem] = provider.getChildren();
+    const [item] = provider.getChildren(projectItem) as TaskListItem[];
+    assert.deepStrictEqual(item.command?.arguments, [{ file: 'src/cart.js', line: 17, column: 0 }]);
+  });
+
+  test('a task with a (#xxxx) id but no matching code target falls back to the task file line', () => {
+    const provider = new TaskListTreeProvider();
+    const idTask: Task = {
+      id: 'dead', text: 'orphaned', status: 'open', tags: {}, lineNumber: 8, file: 'TODO.md',
+    };
+    const root: Project = { name: 'Work', tasks: [idTask], lineNumber: 0, level: 1, children: [] };
+    provider.update([root], new Map());
+
+    const [projectItem] = provider.getChildren();
+    const [item] = provider.getChildren(projectItem) as TaskListItem[];
+    assert.deepStrictEqual(item.command?.arguments, [{ file: 'TODO.md', line: 8, column: 0 }]);
+  });
+
   test('shows "No task file found" when there are no projects', () => {
     const provider = new TaskListTreeProvider();
     provider.update([]);

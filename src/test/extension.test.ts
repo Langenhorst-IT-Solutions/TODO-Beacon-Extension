@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
+import { injectIdIntoTaskEntry } from '../extension';
 
 suite('Extension Activation', () => {
   test('extension is registered', () => {
@@ -130,6 +131,47 @@ suite('Extension Activation', () => {
     } finally {
       await cfg.update('idInjection', undefined, vscode.ConfigurationTarget.Global);
     }
+  });
+
+  test('injectIdIntoTaskEntry inserts (#xxxx) before the Markdown source comment', async () => {
+    const tmp = vscode.Uri.file(path.join(os.tmpdir(), `inject-md-${Date.now()}.md`));
+    await vscode.workspace.fs.writeFile(
+      tmp,
+      new TextEncoder().encode('## Inbox\n- [ ] TODO: refactor loop <!-- src/a.ts:3 -->\n'),
+    );
+    const ok = await injectIdIntoTaskEntry(tmp, '7f3a', 'refactor loop');
+    assert.strictEqual(ok, true);
+    const text = new TextDecoder().decode(await vscode.workspace.fs.readFile(tmp));
+    assert.match(text, /- \[ \] TODO: refactor loop \(#7f3a\) <!-- src\/a\.ts:3 -->/);
+  });
+
+  test('injectIdIntoTaskEntry inserts (#xxxx) before the TaskPaper @source tag', async () => {
+    const tmp = vscode.Uri.file(path.join(os.tmpdir(), `inject-tp-${Date.now()}.todo`));
+    await vscode.workspace.fs.writeFile(
+      tmp,
+      new TextEncoder().encode('Inbox:\n- TODO: refactor loop @fromCode @source(src/a.ts:3)\n'),
+    );
+    const ok = await injectIdIntoTaskEntry(tmp, 'beef', 'refactor loop');
+    assert.strictEqual(ok, true);
+    const text = new TextDecoder().decode(await vscode.workspace.fs.readFile(tmp));
+    assert.match(text, /- TODO: refactor loop \(#beef\) @fromCode @source\(src\/a\.ts:3\)/);
+  });
+
+  test('injectIdIntoTaskEntry is a no-op when the line already has an ID', async () => {
+    const tmp = vscode.Uri.file(path.join(os.tmpdir(), `inject-skip-${Date.now()}.md`));
+    const original = '- [ ] TODO: refactor loop (#abcd) <!-- src/a.ts:3 -->\n';
+    await vscode.workspace.fs.writeFile(tmp, new TextEncoder().encode(original));
+    const ok = await injectIdIntoTaskEntry(tmp, '7f3a', 'refactor loop');
+    assert.strictEqual(ok, false);
+    const text = new TextDecoder().decode(await vscode.workspace.fs.readFile(tmp));
+    assert.strictEqual(text, original);
+  });
+
+  test('injectIdIntoTaskEntry returns false when no matching entry exists', async () => {
+    const tmp = vscode.Uri.file(path.join(os.tmpdir(), `inject-miss-${Date.now()}.md`));
+    await vscode.workspace.fs.writeFile(tmp, new TextEncoder().encode('- [ ] something else\n'));
+    const ok = await injectIdIntoTaskEntry(tmp, '7f3a', 'refactor loop');
+    assert.strictEqual(ok, false);
   });
 
   test('todo-beacon.applyWriteBacks with task file but no pending write-backs', async () => {

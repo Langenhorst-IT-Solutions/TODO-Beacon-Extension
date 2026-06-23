@@ -112,7 +112,9 @@ export function activate(context: vscode.ExtensionContext): void {
       scanner.scan(scanExcludes, getDirective),
       refreshTaskList(taskFile),
     ]);
-    codeProvider.update(todos);
+    // Promoted TODOs (those with an injected (#xxxx)) live in the task
+    // list — hide them from the Code TODOs view so they don't appear twice.
+    codeProvider.update(todos.filter(t => t.id === null));
     updateVisibleHighlights();
 
     if (reconcileEngine) {
@@ -128,6 +130,17 @@ export function activate(context: vscode.ExtensionContext): void {
     }
   }
 
+  function buildCodeTargets(): Map<string, OpenTarget> {
+    const map = new Map<string, OpenTarget>();
+    if (!sidecarIndex) return map;
+    for (const entry of sidecarIndex.all()) {
+      if (entry.codeId) {
+        map.set(entry.codeId, { file: entry.file, line: entry.line, column: 0 });
+      }
+    }
+    return map;
+  }
+
   async function refreshTaskList(
     taskFile: { uri: vscode.Uri; relativePath: string } | null,
   ): Promise<void> {
@@ -138,7 +151,7 @@ export function activate(context: vscode.ExtensionContext): void {
     try {
       const bytes = await vscode.workspace.fs.readFile(taskFile.uri);
       const content = new TextDecoder('utf-8').decode(bytes);
-      listProvider.update(parseTaskFile(content, taskFile.relativePath));
+      listProvider.update(parseTaskFile(content, taskFile.relativePath), buildCodeTargets());
     } catch {
       listProvider.update([]);
     }
@@ -212,6 +225,12 @@ export function activate(context: vscode.ExtensionContext): void {
         };
         sidecarIndex.addOrUpdate({ ...base, codeId });
         await sidecarIndex.save();
+
+        const taskFile = await resolveTaskFile();
+        if (taskFile) {
+          await injectIdIntoTaskEntry(taskFile.uri, codeId, todo.text);
+        }
+
         void vscode.window.showInformationMessage(
           `TODO Beacon: Promoted — #${codeId} injected.`,
         );
@@ -298,3 +317,43 @@ export function activate(context: vscode.ExtensionContext): void {
 }
 
 export function deactivate(): void {}
+
+/**
+ * Injects `(#codeId)` into the first task-list line whose text contains
+ * `todoText` and doesn't already carry an ID. No-op if no match is found,
+ * so it tolerates an absent inbox entry.
+ */
+export async function injectIdIntoTaskEntry(
+  uri: vscode.Uri,
+  codeId: string,
+  todoText: string,
+): Promise<boolean> {
+  let bytes: Uint8Array;
+  try {
+    bytes = await vscode.workspace.fs.readFile(uri);
+  } catch {
+    return false;
+  }
+  const content = new TextDecoder().decode(bytes);
+  const eol = content.includes('\r\n') ? '\r\n' : '\n';
+  const lines = content.split(/\r?\n/);
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!/^\s*-\s+/.test(line)) continue;
+    if (/\(#[a-f0-9]{4,8}\)/.test(line)) continue;
+    if (!line.includes(todoText)) continue;
+
+    const idStr = `(#${codeId})`;
+    const mdComment = line.indexOf(' <!--');
+    const tpSource = line.indexOf(' @');
+    const insertAt =
+      mdComment >= 0 ? mdComment :
+      tpSource >= 0 ? tpSource : line.length;
+    lines[i] = line.slice(0, insertAt).trimEnd() + ' ' + idStr + line.slice(insertAt);
+
+    await vscode.workspace.fs.writeFile(uri, new TextEncoder().encode(lines.join(eol)));
+    return true;
+  }
+  return false;
+}

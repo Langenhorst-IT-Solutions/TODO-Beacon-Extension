@@ -102,12 +102,12 @@ export class TaskProjectItem extends vscode.TreeItem {
 }
 
 export class TaskListItem extends vscode.TreeItem {
-  constructor(public readonly task: Task) {
+  constructor(public readonly task: Task, codeTarget?: OpenTarget) {
     super(task.text || '(empty)', vscode.TreeItemCollapsibleState.None);
     this.contextValue = 'taskListItem';
     this.iconPath = statusIcon(task.status);
     this.description = tagSummary(task.tags);
-    const target: OpenTarget = { file: task.file, line: task.lineNumber, column: 0 };
+    const target: OpenTarget = codeTarget ?? { file: task.file, line: task.lineNumber, column: 0 };
     this.command = {
       command: 'todo-beacon.openFile',
       title: 'Open in Editor',
@@ -123,9 +123,11 @@ export class TaskListTreeProvider
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   private projects: Project[] = [];
+  private codeTargets: Map<string, OpenTarget> = new Map();
 
-  update(projects: Project[]): void {
+  update(projects: Project[], codeTargets?: Map<string, OpenTarget>): void {
     this.projects = projects;
+    this.codeTargets = codeTargets ?? new Map();
     this._onDidChangeTreeData.fire();
   }
 
@@ -147,7 +149,10 @@ export class TaskListTreeProvider
       const { project } = element;
       return [
         ...project.children.map(p => ({ lineNumber: p.lineNumber, item: new TaskProjectItem(p) })),
-        ...project.tasks.map(t => ({ lineNumber: t.lineNumber, item: new TaskListItem(t) })),
+        ...project.tasks.map(t => ({
+          lineNumber: t.lineNumber,
+          item: new TaskListItem(t, t.id ? this.codeTargets.get(t.id) : undefined),
+        })),
       ]
         .sort((a, b) => a.lineNumber - b.lineNumber)
         .map(({ item }) => item);
