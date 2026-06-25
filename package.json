@@ -367,7 +367,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^24.0.0",
     "@types/vscode": "^1.125.0",
-    "typescript-eslint": "^8.0.0",
+    "typescript-eslint": "^8.62.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.0",
     "@vscode/vsce": "^3.0.0",
