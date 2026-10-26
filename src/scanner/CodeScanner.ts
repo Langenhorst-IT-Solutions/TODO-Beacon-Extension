@@ -51,7 +51,9 @@ export class CodeScanner {
       const todos = await this.scanFile(file, directive ?? undefined);
       results.push(...todos);
     }
-    return results;
+    // findFiles() returns files in no guaranteed order, which made the tree
+    // reshuffle on every refresh. Sort by path, then line, for a stable view.
+    return results.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
   }
 
   async scanFile(uri: vscode.Uri, options?: ParseOptions): Promise<TodoComment[]> {
