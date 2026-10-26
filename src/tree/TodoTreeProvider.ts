@@ -10,6 +10,8 @@ export class CodeTodoGroupItem extends vscode.TreeItem {
     public readonly todos: TodoComment[],
   ) {
     super(`${tag} (${todos.length})`, vscode.TreeItemCollapsibleState.Expanded);
+    // Stable id keeps the expand/collapse state across refreshes.
+    this.id = `group:${tag}`;
     this.contextValue = 'codeTodoGroup';
     this.iconPath = tagIcon(tag);
   }
@@ -18,6 +20,7 @@ export class CodeTodoGroupItem extends vscode.TreeItem {
 export class CodeTodoItem extends vscode.TreeItem {
   constructor(public readonly todo: TodoComment) {
     super(todo.text || '(no description)', vscode.TreeItemCollapsibleState.None);
+    this.id = `todo:${todo.file}:${todo.line}:${todo.column}`;
     this.description = `${todo.file}:${todo.line + 1}`;
     this.tooltip = todo.rawLine.trim();
     this.command = {
@@ -37,8 +40,13 @@ export class CodeTodoTreeProvider
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   private todos: TodoComment[] = [];
+  private signature: string | undefined;
 
   update(todos: TodoComment[]): void {
+    // Re-rendering an unchanged tree makes it flicker — only fire on real changes.
+    const signature = JSON.stringify(todos);
+    if (signature === this.signature) return;
+    this.signature = signature;
     this.todos = todos;
     this._onDidChangeTreeData.fire();
   }
@@ -73,12 +81,13 @@ export class CodeTodoTreeProvider
 // ─── Task List Tree ───────────────────────────────────────────────────────────
 
 export class TaskProjectItem extends vscode.TreeItem {
-  constructor(public readonly project: Project) {
+  constructor(public readonly project: Project, id?: string) {
     const hasChildren = project.tasks.length > 0 || project.children.length > 0;
     super(
       project.name || 'Inbox',
       hasChildren ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None,
     );
+    this.id = id;
     this.contextValue = 'taskProject';
 
     const counts = countTasksDeep(project);
@@ -104,6 +113,7 @@ export class TaskProjectItem extends vscode.TreeItem {
 export class TaskListItem extends vscode.TreeItem {
   constructor(public readonly task: Task) {
     super(task.text || '(empty)', vscode.TreeItemCollapsibleState.None);
+    this.id = `task:${task.file}:${task.lineNumber}`;
     this.contextValue = 'taskListItem';
     this.iconPath = statusIcon(task.status);
     this.description = tagSummary(task.tags);
@@ -123,8 +133,12 @@ export class TaskListTreeProvider
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   private projects: Project[] = [];
+  private signature: string | undefined;
 
   update(projects: Project[]): void {
+    const signature = JSON.stringify(projects);
+    if (signature === this.signature) return;
+    this.signature = signature;
     this.projects = projects;
     this._onDidChangeTreeData.fire();
   }
@@ -140,13 +154,13 @@ export class TaskListTreeProvider
         empty.iconPath = new vscode.ThemeIcon('info');
         return [empty];
       }
-      return this.projects.map(p => new TaskProjectItem(p));
+      return projectItems(this.projects, 'project:');
     }
 
     if (element instanceof TaskProjectItem) {
       const { project } = element;
       return [
-        ...project.children.map(p => ({ lineNumber: p.lineNumber, item: new TaskProjectItem(p) })),
+        ...projectItems(project.children, `${element.id}/`).map(item => ({ lineNumber: item.project.lineNumber, item })),
         ...project.tasks.map(t => ({ lineNumber: t.lineNumber, item: new TaskListItem(t) })),
       ]
         .sort((a, b) => a.lineNumber - b.lineNumber)
@@ -158,6 +172,19 @@ export class TaskListTreeProvider
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+// Ids are derived from the heading path rather than line numbers, so editing
+// the task file doesn't reset the expand/collapse state. Duplicate headings
+// under the same parent get a counter suffix to keep ids unique.
+function projectItems(projects: Project[], prefix: string): TaskProjectItem[] {
+  const seen = new Map<string, number>();
+  return projects.map(project => {
+    const count = seen.get(project.name) ?? 0;
+    seen.set(project.name, count + 1);
+    const id = `${prefix}${project.name}${count > 0 ? `#${count}` : ''}`;
+    return new TaskProjectItem(project, id);
+  });
+}
 
 // Display order for Code TODO groups. Tags not listed here are appended
 // afterwards, alphabetically.

@@ -195,7 +195,9 @@ The initial scan runs as `findFiles` plus batched reads with a progress indicato
 
 ### Phase 1 — One-way sync & index
 
-- [ ] Sidecar index (IDs, anchors, hashes) under `.vscode/`.
+> **On hold.** A first implementation of Phases 1–2 lives on the `feature/sync-engine` branch but is not merged — it was not stable enough yet. Lesson learned: a sidecar index inside the repo (`.vscode/todo-beacon-index.json`) shows up as a changed file in every project and causes merge conflicts when committed. When this is picked up again, the index must live in the extension's workspace storage (`ExtensionContext.storageUri`), never in the workspace itself.
+
+- [ ] Sidecar index (IDs, anchors, hashes) in the extension's workspace storage (not in the repo).
 - [ ] Auto-mirror code TODOs into an "inbox" section of the task list (`todo-beacon.autoAddToInbox`).
 - [ ] Fuzzy matching to re-recognize tasks across rescans.
 

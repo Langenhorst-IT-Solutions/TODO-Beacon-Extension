@@ -73,4 +73,11 @@ suite('CodeScanner — VS Code API integration', () => {
     const result = await scanner.scan(['**/*']);
     assert.ok(Array.isArray(result));
   });
+
+  test('scan() returns results sorted by file, then line', async () => {
+    const result = await scanner.scan([]);
+    const keys = result.map(t => [t.file, t.line] as const);
+    const sorted = [...keys].sort((a, b) => a[0].localeCompare(b[0]) || a[1] - b[1]);
+    assert.deepStrictEqual(keys, sorted);
+  });
 });

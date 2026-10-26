@@ -147,7 +147,17 @@ export function activate(context: vscode.ExtensionContext): void {
   const watcher = vscode.workspace.createFileSystemWatcher('**/*');
   let refreshTimer: ReturnType<typeof setTimeout> | undefined;
 
-  function scheduleRefresh(): void {
+  // Directory names taken from "**/<name>/**" exclude patterns (node_modules,
+  // .git, dist, ...). Events from inside them can't change the result, but
+  // they fire constantly during builds and git operations.
+  const ignoredDirs = excludePatterns
+    .map(p => /^\*\*\/([^/*]+)\/\*\*$/.exec(p)?.[1])
+    .filter((name): name is string => !!name);
+  if (!ignoredDirs.includes('.git')) ignoredDirs.push('.git');
+
+  function scheduleRefresh(uri: vscode.Uri): void {
+    const segments = uri.path.split('/');
+    if (segments.some(segment => ignoredDirs.includes(segment))) return;
     clearTimeout(refreshTimer);
     refreshTimer = setTimeout(() => { void refresh(); }, 300);
   }

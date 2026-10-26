@@ -353,3 +353,70 @@ suite('TaskListTreeProvider', () => {
     assert.strictEqual(item.description, '');
   });
 });
+
+suite('Tree providers — refresh stability', () => {
+  test('CodeTodoTreeProvider does not fire a change event for identical data', () => {
+    const provider = new CodeTodoTreeProvider();
+    let fired = 0;
+    provider.onDidChangeTreeData(() => { fired++; });
+
+    provider.update([todo('TODO')]);
+    provider.update([todo('TODO')]);
+    assert.strictEqual(fired, 1);
+
+    provider.update([todo('FIXME')]);
+    assert.strictEqual(fired, 2);
+  });
+
+  test('TaskListTreeProvider does not fire a change event for identical data', () => {
+    const provider = new TaskListTreeProvider();
+    let fired = 0;
+    provider.onDidChangeTreeData(() => { fired++; });
+    const make = (): Project[] => [{ name: 'Work', tasks: [task('a', 1)], lineNumber: 0, level: 1, children: [] }];
+
+    provider.update(make());
+    provider.update(make());
+    assert.strictEqual(fired, 1);
+  });
+
+  test('items get stable ids so the expand state survives a refresh', () => {
+    const provider = new CodeTodoTreeProvider();
+    provider.update([todo('TODO')]);
+    const [group] = provider.getChildren() as CodeTodoGroupItem[];
+    const [item] = provider.getChildren(group);
+    assert.strictEqual(group.id, 'group:TODO');
+    assert.strictEqual(item.id, 'todo:f.ts:0:0');
+  });
+
+  test('project ids follow the heading path, not line numbers', () => {
+    const provider = new TaskListTreeProvider();
+    const build = (offset: number): Project[] => [{
+      name: 'Work',
+      tasks: [],
+      lineNumber: offset,
+      level: 1,
+      children: [{ name: 'Sub', tasks: [], lineNumber: offset + 1, level: 2, children: [] }],
+    }];
+
+    provider.update(build(0));
+    const [before] = provider.getChildren();
+    const [beforeSub] = provider.getChildren(before);
+
+    provider.update(build(5));
+    const [after] = provider.getChildren();
+    const [afterSub] = provider.getChildren(after);
+
+    assert.strictEqual(before.id, after.id);
+    assert.strictEqual(beforeSub.id, afterSub.id);
+  });
+
+  test('duplicate project names under the same parent get unique ids', () => {
+    const provider = new TaskListTreeProvider();
+    provider.update([
+      { name: 'Notes', tasks: [], lineNumber: 0, level: 1, children: [] },
+      { name: 'Notes', tasks: [], lineNumber: 3, level: 1, children: [] },
+    ]);
+    const [a, b] = provider.getChildren();
+    assert.notStrictEqual(a.id, b.id);
+  });
+});
